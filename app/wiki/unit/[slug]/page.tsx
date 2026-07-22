@@ -82,7 +82,7 @@ export default async function UnitPage({
     <div className="mx-auto max-w-4xl px-4 py-14">
       <BackButton fallback="/wiki/units" />
       <div className="flex items-center gap-5">
-        {u.portrait ? null : <IconImg file={u.icon} size={72} alt="" />}
+        <IconImg file={u.icon} size={72} alt="" />
         <div>
           <h1 className="font-display text-4xl">{u.displayName || u.key}</h1>
           {u.unitClass ? (
@@ -110,18 +110,6 @@ export default async function UnitPage({
             ))}
           </div>
         </div>
-        {u.portrait ? (
-          // In-game rendered portrait (transparent PNG from the publish
-          // pipeline); replaces the small icon when available.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={iconUrl(u.portrait as string) ?? undefined}
-            width={176}
-            height={176}
-            alt={u.displayName || u.key}
-            className="ml-auto hidden h-44 w-44 object-contain sm:block"
-          />
-        ) : null}
       </div>
 
       {tooltip?.body ? (
@@ -139,8 +127,10 @@ export default async function UnitPage({
         </p>
       ) : null}
 
-      {Object.keys(stats).length > 0 || u.attackType || u.armorType ? (
-        <div className="mt-8 rounded-lg border border-bh-rule bg-bh-panel p-5 max-w-md">
+      {Object.keys(stats).length > 0 || u.attackType || u.armorType || u.portrait ? (
+        <div className="mt-8 flex flex-wrap items-center gap-8">
+          {Object.keys(stats).length > 0 || u.attackType || u.armorType ? (
+        <div className="w-full max-w-md rounded-lg border border-bh-rule bg-bh-panel p-5">
           <h2 className="font-display text-lg mb-3">Stats</h2>
           {u.attackType || u.armorType ? (
             <div className="mb-4 grid grid-cols-2 gap-4 border-b border-bh-rule pb-4">
@@ -168,6 +158,20 @@ export default async function UnitPage({
               </div>
             ) : null}
           </dl>
+        </div>
+          ) : null}
+          {u.portrait ? (
+            // In-game rendered model (transparent PNG from the publish
+            // pipeline), sitting beside the stat card.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={iconUrl(u.portrait as string) ?? undefined}
+              width={320}
+              height={320}
+              alt={u.displayName || u.key}
+              className="h-80 w-80 max-w-full object-contain"
+            />
+          ) : null}
         </div>
       ) : null}
 
