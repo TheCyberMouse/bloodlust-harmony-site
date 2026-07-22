@@ -212,9 +212,15 @@ export default async function MatrixPage() {
           </tbody>
         </table>
         <p>
-          Magic and Spells attacks skip armor completely. They are reduced by
-          the target&apos;s Magic Resist stat instead, a straight percentage:
-          20 Magic Resist means 20% less magic damage.
+          One distinction matters here:{" "}
+          <strong className="text-bh-ink">armor type</strong> (the matrix
+          column) and the <strong className="text-bh-ink">Armor stat</strong>{" "}
+          (the number) are two different things. Magic and Spells attacks use
+          the matrix like everything else, so Magic vs Heavy still gets that
+          cell&apos;s multiplier in full. What they skip is the Armor stat:
+          in the mitigation step they are reduced by the target&apos;s Magic
+          Resist instead of armor points. Magic Resist is a fraction, so 0.2
+          means 20% less magic damage.
         </p>
       </div>
 
