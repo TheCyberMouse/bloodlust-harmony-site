@@ -114,10 +114,42 @@ export async function getWikiMeta(): Promise<WikiMeta & {
   return (counts.meta ?? {}) as WikiMeta & { damageMatrix?: DamageMatrix };
 }
 
+/** Summoned units per faction. These are created by abilities in battle
+ *  (raised skeletons, totems, animal companions...), so the race -> building
+ *  -> unit walk can't reach them; the game data doesn't record which faction
+ *  a summon belongs to. Curated by hand (2026-07-22) from each faction's
+ *  unit content folder. */
+const FACTION_SUMMONS: Record<string, string[]> = {
+  DA_Race_Human: ["DA_Purity_Flowers"],
+  DA_Race_Wizard: ["DA_Slime"],
+  DA_Race_WoodElf: [
+    "DA_Crow",
+    "DA_Fox",
+    "DA_FrostBear",
+    "DA_WarBear",
+    "DA_Wolf",
+  ],
+  DA_Race_Undead: [
+    "DA_Skeleton_Basic",
+    "DA_UndeadMage_Raised",
+    "DA_Vampire_Lesser",
+  ],
+  DA_Race_Orc: [
+    "DA_OrcWarlock",
+    "DA_Totem_Cleansing",
+    "DA_Totem_Earth",
+    "DA_Totem_Flame",
+    "DA_Totem_Healing",
+    "DA_Totem_Ice",
+    "DA_Totem_Storm",
+  ],
+};
+
 /** Units grouped per faction, derived the same way the game reaches them:
- *  race -> buildings (+ upgrade targets, transitively) -> spawned units. */
+ *  race -> buildings (+ upgrade targets, transitively) -> spawned units,
+ *  plus the curated summons list. */
 export async function unitsByFaction(): Promise<
-  Array<{ race: WikiRecord; units: WikiRecord[] }>
+  Array<{ race: WikiRecord; units: WikiRecord[]; summons: WikiRecord[] }>
 > {
   const [races, buildings, upgrades, units] = await Promise.all([
     listRaces(),
@@ -128,6 +160,7 @@ export async function unitsByFaction(): Promise<
   const buildingMap = new Map(buildings.map((b) => [b.id, b]));
   const upgradeMap = new Map(upgrades.map((u) => [u.id, u]));
   const unitMap = new Map(units.map((u) => [u.id, u]));
+  const unitByKey = new Map(units.map((u) => [u.key, u]));
 
   return races.map((race) => {
     const seenBuildings = new Set<string>();
@@ -158,6 +191,9 @@ export async function unitsByFaction(): Promise<
       race,
       units: unitIds
         .map((id) => unitMap.get(id))
+        .filter((u): u is WikiRecord => Boolean(u)),
+      summons: (FACTION_SUMMONS[race.key] || [])
+        .map((key) => unitByKey.get(key))
         .filter((u): u is WikiRecord => Boolean(u)),
     };
   });

@@ -145,8 +145,8 @@ export default async function Home() {
           </Link>
         </div>
         <div className="space-y-6">
-          {groups.map(({ race, units }) =>
-            units.length === 0 ? null : (
+          {groups.map(({ race, units, summons }) =>
+            units.length === 0 && summons.length === 0 ? null : (
               <div key={race.id} className="flex items-center gap-4">
                 <div className="w-40 shrink-0 flex items-center gap-2">
                   <IconImg file={race.icon} size={28} alt="" />
@@ -155,7 +155,7 @@ export default async function Home() {
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {units.map((u) => (
+                  {[...units, ...summons].map((u) => (
                     <Link
                       key={u.id}
                       href={`/wiki/unit/${slugOf(u.key)}`}
