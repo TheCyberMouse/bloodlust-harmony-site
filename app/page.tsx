@@ -155,8 +155,11 @@ export default async function Home() {
         <div className="space-y-6">
           {groups.map(({ race, units, summons }) =>
             units.length === 0 && summons.length === 0 ? null : (
-              <div key={race.id} className="flex items-center gap-4">
-                <div className="w-40 shrink-0 flex items-center gap-2">
+              <div
+                key={race.id}
+                className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4"
+              >
+                <div className="sm:w-40 shrink-0 flex items-center gap-2">
                   <IconImg file={race.icon} size={28} alt="" />
                   <span className="text-sm font-medium truncate">
                     {race.displayName || race.key}
