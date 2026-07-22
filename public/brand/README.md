@@ -6,7 +6,7 @@ can reference them without code changes:
     logo.png        full logo with wordmark, transparent background
     logo-mark.png   square icon-only mark, transparent background
     wordmark.png    text-only wordmark, transparent background
-    key-art.jpg     main promotional art (wide)
+    key-art.png     main promotional art (wide)
 
 Two files live OUTSIDE this folder because Next.js picks them up by
 convention, zero config:
