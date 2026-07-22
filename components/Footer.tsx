@@ -17,6 +17,12 @@ export default async function Footer() {
           Bloodlust &amp; Harmony. A solo-developed auto-battler RTS.
         </div>
         <div className="flex items-center gap-4">
+          <a href="/lore" className="hover:text-bh-ink transition-colors">
+            Lore
+          </a>
+          <a href="/guides" className="hover:text-bh-ink transition-colors">
+            Guides
+          </a>
           <a
             href="https://discord.gg/"
             target="_blank"

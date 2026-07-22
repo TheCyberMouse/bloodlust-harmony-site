@@ -29,6 +29,12 @@ export default function Header() {
           >
             Matrix
           </Link>
+          <Link
+            href="/devlog"
+            className="text-bh-mute hover:text-bh-ink transition-colors"
+          >
+            Devlog
+          </Link>
           <a
             href="https://store.steampowered.com/"
             target="_blank"

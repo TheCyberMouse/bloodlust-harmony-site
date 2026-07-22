@@ -19,4 +19,4 @@ export function supabase(): SupabaseClient {
 }
 
 export const STORAGE_BUCKET =
-  process.env.SUPABASE_STORAGE_BUCKET || "cybermouse-images";
+  process.env.SUPABASE_STORAGE_BUCKET || "icons";

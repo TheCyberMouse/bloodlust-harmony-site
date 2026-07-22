@@ -18,7 +18,7 @@ export const maxDuration = 60; // Tools that hit Supabase/Replicate need a momen
 
 const PROTOCOL_VERSION = "2024-11-05";
 const SERVER_INFO = {
-  name: "cybermouse-mcp",
+  name: "bloodlust-harmony-mcp",
   version: "0.1.0",
 };
 
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", {
       status: 401,
       headers: {
-        "WWW-Authenticate": `Bearer realm="cybermouse-mcp", resource_metadata="${origin}/.well-known/oauth-protected-resource"`,
+        "WWW-Authenticate": `Bearer realm="bloodlust-harmony-mcp", resource_metadata="${origin}/.well-known/oauth-protected-resource"`,
       },
     });
   }

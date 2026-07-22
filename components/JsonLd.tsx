@@ -1,5 +1,5 @@
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://bloodlust-harmony.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://bloodlust-harmony-site.vercel.app";
 
 /** schema.org VideoGame graph for search engines. */
 export const siteGraph = {

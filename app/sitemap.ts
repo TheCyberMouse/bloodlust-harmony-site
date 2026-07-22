@@ -1,12 +1,21 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/components/JsonLd";
-import { listBuildings, listRaces, listUnits, slugOf } from "@/lib/wiki";
+import {
+  listBuildings,
+  listProsePages,
+  listRaces,
+  listUnits,
+  slugOf,
+} from "@/lib/wiki";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [races, units, buildings] = await Promise.all([
+  const [races, units, buildings, lore, guides, devlog] = await Promise.all([
     listRaces(),
     listUnits(),
     listBuildings(),
+    listProsePages("lore"),
+    listProsePages("guide"),
+    listProsePages("devlog"),
   ]);
 
   const now = new Date();
@@ -39,6 +48,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       priority: 0.6,
     });
+  }
+
+  for (const [base, pages] of [
+    ["lore", lore],
+    ["guides", guides],
+    ["devlog", devlog],
+  ] as const) {
+    entries.push({ url: `${SITE_URL}/${base}`, lastModified: now, priority: 0.6 });
+    for (const p of pages) {
+      entries.push({
+        url: `${SITE_URL}/${base}/${p.slug}`,
+        lastModified: new Date(p.updated_at),
+        priority: 0.6,
+      });
+    }
   }
 
   return entries;

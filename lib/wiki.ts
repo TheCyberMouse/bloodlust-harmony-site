@@ -163,6 +163,49 @@ export async function unitsByFaction(): Promise<
   });
 }
 
+// ---------------------------------------------------------------------------
+// Prose pages (wiki_pages): hand-written lore / guides / devlog, edited via
+// the MCP or /admin. Published rows only — drafts never render.
+// ---------------------------------------------------------------------------
+
+export type ProsePage = {
+  slug: string;
+  title: string;
+  category: string;
+  body: string;
+  updated_at: string;
+};
+
+export async function listProsePages(category: string): Promise<ProsePage[]> {
+  const supabase = supabaseServer();
+  const { data, error } = await supabase
+    .from("wiki_pages")
+    .select("slug, title, category, body, updated_at")
+    .eq("category", category)
+    .eq("status", "published")
+    .order("updated_at", { ascending: false });
+  if (error) {
+    console.error(`[wiki] listProsePages(${category}) failed:`, error.message);
+    return [];
+  }
+  return (data ?? []) as ProsePage[];
+}
+
+export async function getProsePage(slug: string): Promise<ProsePage | null> {
+  const supabase = supabaseServer();
+  const { data, error } = await supabase
+    .from("wiki_pages")
+    .select("slug, title, category, body, updated_at")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
+  if (error) {
+    console.error(`[wiki] getProsePage(${slug}) failed:`, error.message);
+    return null;
+  }
+  return (data as ProsePage | null) ?? null;
+}
+
 export function tagLeaf(tag: string | undefined): string {
   if (!tag) return "";
   const parts = tag.split(".");

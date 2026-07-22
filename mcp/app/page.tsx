@@ -20,7 +20,7 @@ export default function RootPage() {
           href="https://cyber-mouse-website.vercel.app/"
           style={{ color: "#0a0a0a" }}
         >
-          cybermouse.com
+          bloodlust-harmony-site.vercel.app
         </a>
         .
       </p>
