@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
 import Slideshow from "@/components/Slideshow";
@@ -15,7 +16,15 @@ export default async function Home() {
   return (
     <div className="mx-auto max-w-6xl px-4">
       {/* Hero */}
-      <section className="py-24 text-center">
+      <section className="pt-14 pb-24 text-center">
+        <Image
+          src="/brand/logo.png"
+          alt="Bloodlust & Harmony"
+          width={1280}
+          height={720}
+          priority
+          className="mx-auto -mb-6 w-full max-w-xl h-auto"
+        />
         <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-6">
           01 · An auto-battler RTS
         </p>

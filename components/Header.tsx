@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { STEAM_URL } from "@/lib/links";
 
@@ -5,8 +6,20 @@ export default function Header() {
   return (
     <header className="border-b border-bh-rule bg-bh-night/90 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display text-lg tracking-wide text-bh-ink">
-          Bloodlust <span className="text-bh-blood">&amp;</span> Harmony
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 font-display text-lg tracking-wide text-bh-ink"
+        >
+          <Image
+            src="/brand/logo-mark.png"
+            alt=""
+            width={36}
+            height={36}
+            className="h-9 w-9"
+          />
+          <span>
+            Bloodlust <span className="text-bh-blood">&amp;</span> Harmony
+          </span>
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/wiki" className="text-bh-mute hover:text-bh-ink transition-colors">
