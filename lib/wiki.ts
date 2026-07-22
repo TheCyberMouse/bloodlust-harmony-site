@@ -262,6 +262,16 @@ export function dpsOf(stats: Record<string, number>): number | null {
   return Math.round(dmg * spd * 10) / 10;
 }
 
+/** Color classes for a damage-matrix multiplier (shared by the matrix page
+ *  and the attack/armor hover tooltips). */
+export function matrixTone(mult: number): string {
+  if (mult >= 1.5) return "bg-green-900/50 text-green-300 font-semibold";
+  if (mult > 1.0) return "bg-green-900/25 text-green-400";
+  if (mult === 1.0) return "text-bh-mute";
+  if (mult >= 0.6) return "bg-red-900/25 text-red-400";
+  return "bg-red-900/50 text-red-300 font-semibold";
+}
+
 /** Human labels for the canonical attribute names used in stats objects. */
 export const STAT_LABELS: Record<string, string> = {
   MaxHealth: "HP",

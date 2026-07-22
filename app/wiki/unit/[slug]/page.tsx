@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import IconImg from "@/components/IconImg";
 import TagBadge from "@/components/TagBadge";
+import TypeStat from "@/components/TypeStat";
 import { GameText } from "@/lib/richtext";
 import {
   dpsOf,
@@ -81,26 +82,12 @@ export default async function UnitPage({
         <IconImg file={u.icon} size={72} alt="" />
         <div>
           <h1 className="font-display text-4xl">{u.displayName || u.key}</h1>
+          {u.unitClass ? (
+            <p className="mt-1 font-display text-xl text-bh-gold">
+              {tagLeaf(u.unitClass as string)}
+            </p>
+          ) : null}
           <div className="mt-2 flex flex-wrap gap-2">
-            {u.unitClass ? (
-              <span className="inline-block rounded border border-bh-rule bg-bh-panel px-2 py-0.5 text-xs">
-                {tagLeaf(u.unitClass as string)}
-              </span>
-            ) : null}
-            {u.attackType ? (
-              <TagBadge
-                tag={u.attackType as string}
-                prefix="Attack:"
-                iconMap={meta.attackTypeIcons}
-              />
-            ) : null}
-            {u.armorType ? (
-              <TagBadge
-                tag={u.armorType as string}
-                prefix="Armor:"
-                iconMap={meta.armorTypeIcons}
-              />
-            ) : null}
             {u.damageElement ? (
               <TagBadge
                 tag={u.damageElement as string}
@@ -137,9 +124,19 @@ export default async function UnitPage({
         </p>
       ) : null}
 
-      {Object.keys(stats).length > 0 ? (
+      {Object.keys(stats).length > 0 || u.attackType || u.armorType ? (
         <div className="mt-8 rounded-lg border border-bh-rule bg-bh-panel p-5 max-w-md">
           <h2 className="font-display text-lg mb-3">Stats</h2>
+          {u.attackType || u.armorType ? (
+            <div className="mb-4 grid grid-cols-2 gap-4 border-b border-bh-rule pb-4">
+              {u.attackType ? (
+                <TypeStat kind="attack" tag={u.attackType as string} meta={meta} />
+              ) : null}
+              {u.armorType ? (
+                <TypeStat kind="armor" tag={u.armorType as string} meta={meta} />
+              ) : null}
+            </div>
+          ) : null}
           <dl className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
             {STAT_ORDER.filter((k) => stats[k] !== undefined).map((k) => (
               <div key={k} className="flex justify-between">

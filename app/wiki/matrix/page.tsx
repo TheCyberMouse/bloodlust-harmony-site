@@ -1,17 +1,9 @@
 import IconImg from "@/components/IconImg";
-import { getWikiMeta, tagLeaf } from "@/lib/wiki";
+import { getWikiMeta, matrixTone, tagLeaf } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
 export const metadata = { title: "Damage matrix" };
-
-function cellTone(mult: number): string {
-  if (mult >= 1.5) return "bg-green-900/50 text-green-300 font-semibold";
-  if (mult > 1.0) return "bg-green-900/25 text-green-400";
-  if (mult === 1.0) return "text-bh-mute";
-  if (mult >= 0.6) return "bg-red-900/25 text-red-400";
-  return "bg-red-900/50 text-red-300 font-semibold";
-}
 
 export default async function MatrixPage() {
   const meta = await getWikiMeta();
@@ -78,7 +70,7 @@ export default async function MatrixPage() {
                     return (
                       <td
                         key={armor}
-                        className={`min-w-[5.5rem] p-3 text-center text-lg tabular-nums ${cellTone(mult)}`}
+                        className={`min-w-[5.5rem] p-3 text-center text-lg tabular-nums ${matrixTone(mult)}`}
                       >
                         {mult.toFixed(2)}
                       </td>
