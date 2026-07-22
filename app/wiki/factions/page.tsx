@@ -1,6 +1,6 @@
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
-import { slugOf, unitsByFaction } from "@/lib/wiki";
+import { raceSlug, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -30,7 +30,7 @@ export default async function FactionsIndex() {
           return (
             <Link
               key={race.id}
-              href={`/wiki/faction/${slugOf(race.key)}`}
+              href={`/wiki/faction/${raceSlug(race)}`}
               className="group flex items-start gap-5 rounded-lg border border-bh-rule bg-bh-panel p-5 hover:border-bh-blood transition-colors"
             >
               <IconImg file={race.icon} size={64} alt="" />

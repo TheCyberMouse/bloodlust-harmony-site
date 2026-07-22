@@ -5,6 +5,7 @@ import {
   listProsePages,
   listRaces,
   listUnits,
+  raceSlug,
   slugOf,
 } from "@/lib/wiki";
 
@@ -33,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const r of races) {
     entries.push({
-      url: `${SITE_URL}/wiki/faction/${slugOf(r.key)}`,
+      url: `${SITE_URL}/wiki/faction/${raceSlug(r)}`,
       lastModified: now,
       priority: 0.8,
     });

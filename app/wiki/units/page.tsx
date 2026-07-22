@@ -1,6 +1,13 @@
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
-import { dpsOf, slugOf, tagLeaf, unitsByFaction, type WikiRecord } from "@/lib/wiki";
+import {
+  dpsOf,
+  raceSlug,
+  slugOf,
+  tagLeaf,
+  unitsByFaction,
+  type WikiRecord,
+} from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -43,14 +50,14 @@ export default async function UnitsIndex() {
         Every unit in the game, grouped by the faction that fields it.
       </p>
 
-      {groups.map(({ race, units, summons, inWorks }) =>
+      {groups.map(({ race, units, unitTrees, summons, inWorks }) =>
         units.length === 0 && summons.length === 0 && inWorks.length === 0 ? null : (
           <section key={race.id}>
             <div className="mt-12 mb-4 flex items-center gap-3">
               <IconImg file={race.icon} size={36} alt="" />
               <h2 className="font-display text-2xl">
                 <Link
-                  href={`/wiki/faction/${slugOf(race.key)}`}
+                  href={`/wiki/faction/${raceSlug(race)}`}
                   className="hover:text-bh-blood transition-colors"
                 >
                   {race.displayName || race.key}
@@ -58,10 +65,31 @@ export default async function UnitsIndex() {
               </h2>
               <span className="text-sm text-bh-mute">{units.length} units</span>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {units.map((u) => (
-                <UnitCard key={u.id} u={u} />
-              ))}
+            {/* One row per tech tree (a spawner and its upgrades); units from
+                single-unit trees pool together at the end. */}
+            <div className="space-y-3">
+              {unitTrees
+                .filter((t) => t.length > 1)
+                .map((tree) => (
+                  <div
+                    key={tree[0].id}
+                    className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                  >
+                    {tree.map((u) => (
+                      <UnitCard key={u.id} u={u} />
+                    ))}
+                  </div>
+                ))}
+              {unitTrees.filter((t) => t.length === 1).flat().length > 0 ? (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {unitTrees
+                    .filter((t) => t.length === 1)
+                    .flat()
+                    .map((u) => (
+                      <UnitCard key={u.id} u={u} />
+                    ))}
+                </div>
+              ) : null}
             </div>
 
             {summons.length > 0 ? (

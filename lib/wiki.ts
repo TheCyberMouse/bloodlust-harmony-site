@@ -46,6 +46,26 @@ export function slugOf(key: string): string {
   return key.replace(/^DA_/i, "").toLowerCase();
 }
 
+/** Faction URLs use the faction's public name ("grovewardens"), not the DA
+ *  key ("race_woodelf"). */
+export function raceSlug(race: WikiRecord): string {
+  return (race.displayName || race.key)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Race lookup accepting the display-name slug, with the legacy DA-key slug
+ *  as a fallback so old links keep resolving. */
+export async function findRaceBySlug(slug: string): Promise<WikiRecord | null> {
+  const races = await listRaces();
+  return (
+    races.find(
+      (r) => raceSlug(r) === slug || (r.key && slugOf(r.key) === slug),
+    ) ?? null
+  );
+}
+
 async function listTable(table: string): Promise<WikiRecord[]> {
   const supabase = supabaseServer();
   const { data, error } = await supabase.from(table).select("data").range(0, 9999);
@@ -156,6 +176,7 @@ export async function unitsByFaction(): Promise<
   Array<{
     race: WikiRecord;
     units: WikiRecord[];
+    unitTrees: WikiRecord[][];
     summons: WikiRecord[];
     inWorks: WikiRecord[];
   }>
@@ -172,35 +193,33 @@ export async function unitsByFaction(): Promise<
   const unitByKey = new Map(units.map((u) => [u.key, u]));
 
   return races.map((race) => {
-    const seenBuildings = new Set<string>();
-    const unitIds: string[] = [];
+    const { mainTrees, specialTrees, castleTree } = raceBuildingTrees(
+      race,
+      buildingMap,
+      upgradeMap,
+    );
+
+    // One unit tree per building tree: the units its buildings train, in
+    // upgrade order. A unit trained by two trees lands in the first.
     const seenUnits = new Set<string>();
-
-    const visit = (buildingId: string | undefined) => {
-      if (!buildingId || seenBuildings.has(buildingId)) return;
-      seenBuildings.add(buildingId);
-      const b = buildingMap.get(buildingId);
-      if (!b) return;
-      const spawned = b.spawnedUnit as string | undefined;
-      if (spawned && !seenUnits.has(spawned) && unitMap.has(spawned)) {
-        seenUnits.add(spawned);
-        unitIds.push(spawned);
-      }
-      for (const upgId of (b.upgrades as string[]) || []) {
-        const upg = upgradeMap.get(upgId);
-        if (upg) visit(upg.targetBuilding as string | undefined);
-      }
-    };
-
-    for (const id of (race.buildings as string[]) || []) visit(id);
-    for (const id of (race.specialBuildings as string[]) || []) visit(id);
-    visit(race.castle as string | undefined);
+    const unitTrees = [...mainTrees, ...specialTrees, castleTree]
+      .map((tree) => {
+        const treeUnits: WikiRecord[] = [];
+        for (const b of tree) {
+          const id = b.spawnedUnit as string | undefined;
+          if (!id || seenUnits.has(id)) continue;
+          seenUnits.add(id);
+          const u = unitMap.get(id);
+          if (u) treeUnits.push(u);
+        }
+        return treeUnits;
+      })
+      .filter((t) => t.length > 0);
 
     return {
       race,
-      units: unitIds
-        .map((id) => unitMap.get(id))
-        .filter((u): u is WikiRecord => Boolean(u)),
+      units: unitTrees.flat(),
+      unitTrees,
       summons: (FACTION_SUMMONS[race.key] || [])
         .map((key) => unitByKey.get(key))
         .filter((u): u is WikiRecord => Boolean(u)),
@@ -211,24 +230,23 @@ export async function unitsByFaction(): Promise<
   });
 }
 
-/** Buildings grouped per faction, in build-menu order (buildable list, then
- *  special buildings, then the castle), with upgrade targets folded in after
- *  the building they upgrade from. */
-export async function buildingsByFaction(): Promise<
-  Array<{ race: WikiRecord; buildings: WikiRecord[] }>
-> {
-  const [races, buildings, upgrades] = await Promise.all([
-    listRaces(),
-    listBuildings(),
-    listUpgrades(),
-  ]);
-  const buildingMap = new Map(buildings.map((b) => [b.id, b]));
-  const upgradeMap = new Map(upgrades.map((u) => [u.id, u]));
+/** Builds this race's building trees: one array per root building holding
+ *  the root plus its transitive upgrade targets, in upgrade order. `seen` is
+ *  shared across roots so a building reachable from two roots lands in the
+ *  first tree only. */
+function raceBuildingTrees(
+  race: WikiRecord,
+  buildingMap: Map<string, WikiRecord>,
+  upgradeMap: Map<string, WikiRecord>,
+): {
+  mainTrees: WikiRecord[][];
+  specialTrees: WikiRecord[][];
+  castleTree: WikiRecord[];
+} {
+  const seen = new Set<string>();
 
-  return races.map((race) => {
-    const seen = new Set<string>();
+  const treeOf = (rootId: string | undefined): WikiRecord[] => {
     const out: WikiRecord[] = [];
-
     const visit = (buildingId: string | undefined) => {
       if (!buildingId || seen.has(buildingId)) return;
       seen.add(buildingId);
@@ -240,13 +258,42 @@ export async function buildingsByFaction(): Promise<
         if (upg) visit(upg.targetBuilding as string | undefined);
       }
     };
+    visit(rootId);
+    return out;
+  };
 
-    for (const id of (race.buildings as string[]) || []) visit(id);
-    for (const id of (race.specialBuildings as string[]) || []) visit(id);
-    visit(race.castle as string | undefined);
+  const mainTrees = ((race.buildings as string[]) || [])
+    .map((id) => treeOf(id))
+    .filter((t) => t.length > 0);
+  const specialTrees = ((race.specialBuildings as string[]) || [])
+    .map((id) => treeOf(id))
+    .filter((t) => t.length > 0);
+  const castleTree = treeOf(race.castle as string | undefined);
+  return { mainTrees, specialTrees, castleTree };
+}
 
-    return { race, buildings: out };
-  });
+/** Buildings grouped per faction as upgrade trees, split the same way the
+ *  faction pages split them: buildable roster, special buildings, castle. */
+export async function buildingsByFaction(): Promise<
+  Array<{
+    race: WikiRecord;
+    mainTrees: WikiRecord[][];
+    specialTrees: WikiRecord[][];
+    castleTree: WikiRecord[];
+  }>
+> {
+  const [races, buildings, upgrades] = await Promise.all([
+    listRaces(),
+    listBuildings(),
+    listUpgrades(),
+  ]);
+  const buildingMap = new Map(buildings.map((b) => [b.id, b]));
+  const upgradeMap = new Map(upgrades.map((u) => [u.id, u]));
+
+  return races.map((race) => ({
+    race,
+    ...raceBuildingTrees(race, buildingMap, upgradeMap),
+  }));
 }
 
 // ---------------------------------------------------------------------------

@@ -4,12 +4,13 @@ import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
 import { GameText } from "@/lib/richtext";
 import {
-  findBySlug,
+  findRaceBySlug,
   listBuildings,
   listRaces,
   listResearches,
   listShopItems,
   listUnits,
+  raceSlug,
   slugOf,
   type WikiRecord,
 } from "@/lib/wiki";
@@ -19,7 +20,7 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const races = await listRaces();
-  return races.map((r) => ({ slug: slugOf(r.key) }));
+  return races.map((r) => ({ slug: raceSlug(r) }));
 }
 
 function byId(records: WikiRecord[]): Map<string, WikiRecord> {
@@ -63,7 +64,7 @@ export default async function FactionPage({
 }: {
   params: { slug: string };
 }) {
-  const race = await findBySlug("races", params.slug);
+  const race = await findRaceBySlug(params.slug);
   if (!race) notFound();
 
   const [buildings, units, researches, shopItems] = await Promise.all([

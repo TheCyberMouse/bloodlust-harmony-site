@@ -4,7 +4,7 @@ import IconImg from "@/components/IconImg";
 import Slideshow from "@/components/Slideshow";
 import { DISCORD_URL, STEAM_URL } from "@/lib/links";
 import { listScreenshots } from "@/lib/screenshots";
-import { slugOf, unitsByFaction } from "@/lib/wiki";
+import { raceSlug, slugOf, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -120,7 +120,7 @@ export default async function Home() {
           {races.map((race) => (
             <Link
               key={race.id}
-              href={`/wiki/faction/${slugOf(race.key)}`}
+              href={`/wiki/faction/${raceSlug(race)}`}
               className="group rounded-lg border border-bh-rule bg-bh-panel p-5 hover:border-bh-blood transition-colors"
             >
               <div className="flex items-center gap-4">

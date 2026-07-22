@@ -7,7 +7,7 @@ import {
   listResearches,
   listStatuses,
   listUnits,
-  slugOf,
+  raceSlug,
 } from "@/lib/wiki";
 
 export const revalidate = 3600;
@@ -84,7 +84,7 @@ export default async function WikiHub() {
           return (
             <Link
               key={race.id}
-              href={`/wiki/faction/${slugOf(race.key)}`}
+              href={`/wiki/faction/${raceSlug(race)}`}
               className="group rounded-lg border border-bh-rule bg-bh-panel p-5 hover:border-bh-blood transition-colors"
             >
               <div className="flex items-center gap-4">
