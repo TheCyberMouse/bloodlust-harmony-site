@@ -121,7 +121,6 @@ export async function getWikiMeta(): Promise<WikiMeta & {
  *  unit content folder. */
 const FACTION_SUMMONS: Record<string, string[]> = {
   DA_Race_Human: ["DA_Purity_Flowers"],
-  DA_Race_Wizard: ["DA_Slime"],
   DA_Race_WoodElf: [
     "DA_Crow",
     "DA_Fox",
@@ -135,7 +134,6 @@ const FACTION_SUMMONS: Record<string, string[]> = {
     "DA_Vampire_Lesser",
   ],
   DA_Race_Orc: [
-    "DA_OrcWarlock",
     "DA_Totem_Cleansing",
     "DA_Totem_Earth",
     "DA_Totem_Flame",
@@ -145,11 +143,22 @@ const FACTION_SUMMONS: Record<string, string[]> = {
   ],
 };
 
+/** Units that exist in the game data but are still in development. Shown in
+ *  their own "In Works" subsection; kept out of the home page strip. */
+const FACTION_IN_WORKS: Record<string, string[]> = {
+  DA_Race_Orc: ["DA_OrcWarlock"],
+};
+
 /** Units grouped per faction, derived the same way the game reaches them:
  *  race -> buildings (+ upgrade targets, transitively) -> spawned units,
  *  plus the curated summons list. */
 export async function unitsByFaction(): Promise<
-  Array<{ race: WikiRecord; units: WikiRecord[]; summons: WikiRecord[] }>
+  Array<{
+    race: WikiRecord;
+    units: WikiRecord[];
+    summons: WikiRecord[];
+    inWorks: WikiRecord[];
+  }>
 > {
   const [races, buildings, upgrades, units] = await Promise.all([
     listRaces(),
@@ -193,6 +202,9 @@ export async function unitsByFaction(): Promise<
         .map((id) => unitMap.get(id))
         .filter((u): u is WikiRecord => Boolean(u)),
       summons: (FACTION_SUMMONS[race.key] || [])
+        .map((key) => unitByKey.get(key))
+        .filter((u): u is WikiRecord => Boolean(u)),
+      inWorks: (FACTION_IN_WORKS[race.key] || [])
         .map((key) => unitByKey.get(key))
         .filter((u): u is WikiRecord => Boolean(u)),
     };

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
 import { GameText } from "@/lib/richtext";
 import {
@@ -56,6 +57,7 @@ export default async function BuildingPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
+      <BackButton fallback="/wiki/buildings" />
       <div className="flex items-center gap-5">
         <IconImg file={b.icon} size={72} alt="" />
         <div>

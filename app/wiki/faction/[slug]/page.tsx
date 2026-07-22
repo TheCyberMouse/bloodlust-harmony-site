@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
 import { GameText } from "@/lib/richtext";
 import {
@@ -95,6 +96,7 @@ export default async function FactionPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
+      <BackButton fallback="/wiki" />
       <div className="flex items-center gap-5">
         <IconImg file={race.icon} size={72} alt="" />
         <div>

@@ -43,8 +43,8 @@ export default async function UnitsIndex() {
         Every unit in the game, grouped by the faction that fields it.
       </p>
 
-      {groups.map(({ race, units, summons }) =>
-        units.length === 0 && summons.length === 0 ? null : (
+      {groups.map(({ race, units, summons, inWorks }) =>
+        units.length === 0 && summons.length === 0 && inWorks.length === 0 ? null : (
           <section key={race.id}>
             <div className="mt-12 mb-4 flex items-center gap-3">
               <IconImg file={race.icon} size={36} alt="" />
@@ -74,6 +74,22 @@ export default async function UnitsIndex() {
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {summons.map((u) => (
+                    <UnitCard key={u.id} u={u} />
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {inWorks.length > 0 ? (
+              <>
+                <div className="mt-6 mb-3 flex items-baseline gap-3">
+                  <h3 className="font-display text-lg text-bh-mute">In Works</h3>
+                  <span className="text-xs text-bh-mute">
+                    In development. Stats and design subject to change.
+                  </span>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {inWorks.map((u) => (
                     <UnitCard key={u.id} u={u} />
                   ))}
                 </div>

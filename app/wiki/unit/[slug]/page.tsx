@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
 import TagBadge from "@/components/TagBadge";
 import TypeStat from "@/components/TypeStat";
@@ -79,6 +80,7 @@ export default async function UnitPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
+      <BackButton fallback="/wiki/units" />
       <div className="flex items-center gap-5">
         {u.portrait ? null : <IconImg file={u.icon} size={72} alt="" />}
         <div>

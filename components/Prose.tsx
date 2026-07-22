@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import type { ProsePage } from "@/lib/wiki";
 
 /**
@@ -77,8 +78,15 @@ export function ProseIndex({
 }
 
 export function ProseArticle({ page }: { page: ProsePage }) {
+  const fallback =
+    page.category === "lore"
+      ? "/lore"
+      : page.category === "devlog"
+        ? "/devlog"
+        : "/guides";
   return (
     <article className="mx-auto max-w-4xl px-4 py-14">
+      <BackButton fallback={fallback} />
       <h1 className="font-display text-4xl">{page.title}</h1>
       <p className="mt-2 text-xs text-bh-mute">
         Updated{" "}
