@@ -139,7 +139,6 @@ export default function HowToPlayPage() {
       <Section title="Controls">
         <ul className="list-disc space-y-2 pl-5">
           <li>Camera: WASD or push the mouse to the screen edge. Click and hold the minimap to glide.</li>
-          <li>Number keys press the build bar and command card buttons.</li>
           <li>Tab cycles between your buildings.</li>
           <li>Shift+Click keeps placing the same building (Quick Build).</li>
           <li>HUD buttons toggle health bars and floating damage numbers.</li>
