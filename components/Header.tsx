@@ -50,6 +50,12 @@ export default function Header() {
             Matrix
           </Link>
           <Link
+            href="/wiki/statuses"
+            className="text-bh-mute hover:text-bh-ink transition-colors"
+          >
+            Statuses
+          </Link>
+          <Link
             href="/devlog"
             className="text-bh-mute hover:text-bh-ink transition-colors"
           >
