@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  /* Prevents nav shift between short and long pages (reference-site gotcha). */
+  scrollbar-gutter: stable;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(194, 45, 54, 0.08), transparent),
+    #0c0a10;
+}
+
+/* Game rich-text decorators. The export keeps the in-game markup
+   (<dmg>14</> etc.); lib/richtext.tsx maps each tag to one of these. */
+.rt-dmg { color: #e05252; font-weight: 600; }
+.rt-heal { color: #6fbf73; font-weight: 600; }
+.rt-util { color: #6ea8d8; font-weight: 600; }
+.rt-cost { color: #c9a860; font-weight: 600; }
+.rt-buff { color: #8fd0a0; font-weight: 600; }
+.rt-debuff { color: #c77dd8; font-weight: 600; }
+.rt-flavor { font-style: italic; color: #8d8798; }
