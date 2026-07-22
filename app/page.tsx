@@ -17,23 +17,16 @@ export default async function Home() {
     <div className="mx-auto max-w-6xl px-4">
       {/* Hero */}
       <section className="pt-14 pb-24 text-center">
+        <h1 className="sr-only">Bloodlust &amp; Harmony</h1>
         <Image
           src="/brand/logo.png"
           alt="Bloodlust & Harmony"
           width={1280}
           height={720}
           priority
-          className="mx-auto -mb-6 w-full max-w-xl h-auto"
+          className="mx-auto w-full max-w-xl h-auto"
         />
-        <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-6">
-          01 · An auto-battler RTS
-        </p>
-        <h1 className="font-display text-5xl sm:text-6xl leading-tight">
-          Your army fights.
-          <br />
-          <span className="text-bh-blood">You build.</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-prose text-lg text-bh-mute">
+        <p className="mx-auto mt-2 max-w-prose text-lg text-bh-mute">
           Every building you place spawns soldiers that march on the enemy
           castle, wave after wave, all match long. Feed your bloodlust and every
           coin becomes swords at the front line. Keep your harmony and your
@@ -78,7 +71,7 @@ export default async function Home() {
           <hr className="border-bh-rule" />
           <section className="py-16">
             <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-6">
-              02 · From the battlefield
+              From the battlefield
             </p>
             <Slideshow images={screenshots} />
           </section>
@@ -91,25 +84,19 @@ export default async function Home() {
       <section className="py-20 grid gap-10 sm:grid-cols-3">
         {[
           {
-            n: "03",
             title: "Build the engine",
             body: "Every 10 Gold spent on unit buildings becomes +1 Income, paid out every 30 seconds. Spending IS investing. Wood comes from growth; Stardust is precious.",
           },
           {
-            n: "04",
             title: "Send the waves",
             body: "Every 60 seconds a wave spawns and marches. No unit micro: your build order is your strategy, and every building keeps contributing on its turn.",
           },
           {
-            n: "05",
             title: "Win the matchup",
             body: "Attack and armor types, elements, immunities, stuns, auras, and stealth. Every enemy composition is a puzzle you answer at the build menu.",
           },
         ].map((c) => (
-          <div key={c.n}>
-            <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-3">
-              {c.n}
-            </p>
+          <div key={c.title}>
             <h2 className="font-display text-xl mb-2">{c.title}</h2>
             <p className="text-sm text-bh-mute leading-relaxed">{c.body}</p>
           </div>
@@ -120,9 +107,6 @@ export default async function Home() {
 
       {/* Factions */}
       <section className="py-20">
-        <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-3">
-          06 · Factions
-        </p>
         <h2 className="font-display text-3xl mb-8">Pick your army</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {races.map((race) => (
@@ -151,9 +135,6 @@ export default async function Home() {
 
       {/* Every unit, by faction (lead-in to the full index) */}
       <section className="py-20">
-        <p className="text-xs uppercase tracking-[0.3em] text-bh-mute mb-3">
-          07 · The armies
-        </p>
         <div className="flex items-end justify-between mb-8">
           <h2 className="font-display text-3xl">Every unit in the game</h2>
           <Link
