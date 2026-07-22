@@ -22,6 +22,12 @@ export default function Header() {
           </span>
         </Link>
         <nav className="flex items-center gap-6 text-sm">
+          <Link
+            href="/how-to-play"
+            className="text-bh-mute hover:text-bh-ink transition-colors"
+          >
+            How to Play
+          </Link>
           <Link href="/wiki" className="text-bh-mute hover:text-bh-ink transition-colors">
             Wiki
           </Link>

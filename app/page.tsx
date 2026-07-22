@@ -101,6 +101,14 @@ export default async function Home() {
             <p className="text-sm text-bh-mute leading-relaxed">{c.body}</p>
           </div>
         ))}
+        <p className="sm:col-span-3 text-sm">
+          <Link
+            href="/how-to-play"
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            Read the full How to Play guide →
+          </Link>
+        </p>
       </section>
 
       <hr className="border-bh-rule" />
