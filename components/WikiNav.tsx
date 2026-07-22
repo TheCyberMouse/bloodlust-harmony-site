@@ -11,7 +11,12 @@ const TABS: Array<{
   {
     href: "/wiki",
     label: "Overview",
-    isActive: (p) => p === "/wiki" || p.startsWith("/wiki/faction"),
+    isActive: (p) => p === "/wiki",
+  },
+  {
+    href: "/wiki/factions",
+    label: "Factions",
+    isActive: (p) => p.startsWith("/wiki/faction"),
   },
   {
     href: "/wiki/units",
