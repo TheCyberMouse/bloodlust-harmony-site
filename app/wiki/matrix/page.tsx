@@ -40,21 +40,21 @@ export default async function MatrixPage() {
 
       {matrix ? (
         <div className="mt-10 overflow-x-auto">
-          <table className="border-collapse text-sm">
+          <table className="border-collapse text-base">
             <thead>
               <tr>
-                <th className="p-2 text-left text-xs text-bh-mute font-normal">
+                <th className="p-3 text-left text-sm text-bh-mute font-normal">
                   Attack ↓ / Armor →
                 </th>
                 {matrix.armorTypes.map((armor) => (
-                  <th key={armor} className="p-2 text-center font-normal">
-                    <div className="flex flex-col items-center gap-1">
+                  <th key={armor} className="p-3 text-center font-normal">
+                    <div className="flex flex-col items-center gap-1.5">
                       <IconImg
                         file={meta.armorTypeIcons?.[armor]}
-                        size={28}
+                        size={56}
                         alt=""
                       />
-                      <span className="text-xs">{tagLeaf(armor)}</span>
+                      <span className="text-sm">{tagLeaf(armor)}</span>
                     </div>
                   </th>
                 ))}
@@ -63,11 +63,11 @@ export default async function MatrixPage() {
             <tbody>
               {matrix.attackTypes.map((attack) => (
                 <tr key={attack} className="border-t border-bh-rule">
-                  <th className="p-2 text-left font-normal">
-                    <div className="flex items-center gap-2">
+                  <th className="p-3 text-left font-normal">
+                    <div className="flex items-center gap-3">
                       <IconImg
                         file={meta.attackTypeIcons?.[attack]}
-                        size={28}
+                        size={56}
                         alt=""
                       />
                       <span>{tagLeaf(attack)}</span>
@@ -78,7 +78,7 @@ export default async function MatrixPage() {
                     return (
                       <td
                         key={armor}
-                        className={`p-2 text-center tabular-nums ${cellTone(mult)}`}
+                        className={`min-w-[5.5rem] p-3 text-center text-lg tabular-nums ${cellTone(mult)}`}
                       >
                         {mult.toFixed(2)}
                       </td>
