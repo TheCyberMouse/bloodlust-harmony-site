@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE_URL, lastModified: now, priority: 1 },
     { url: `${SITE_URL}/wiki`, lastModified: now, priority: 0.9 },
     { url: `${SITE_URL}/wiki/units`, lastModified: now, priority: 0.8 },
+    { url: `${SITE_URL}/wiki/buildings`, lastModified: now, priority: 0.8 },
     { url: `${SITE_URL}/wiki/abilities`, lastModified: now, priority: 0.7 },
     { url: `${SITE_URL}/wiki/matrix`, lastModified: now, priority: 0.7 },
     { url: `${SITE_URL}/wiki/statuses`, lastModified: now, priority: 0.5 },

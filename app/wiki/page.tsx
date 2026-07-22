@@ -64,6 +64,12 @@ export default async function WikiHub() {
           All units
         </Link>
         <Link
+          href="/wiki/buildings"
+          className="rounded border border-bh-rule px-4 py-2 hover:border-bh-mute transition-colors"
+        >
+          All buildings
+        </Link>
+        <Link
           href="/wiki/abilities"
           className="rounded border border-bh-rule px-4 py-2 hover:border-bh-mute transition-colors"
         >

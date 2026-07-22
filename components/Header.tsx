@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { STEAM_URL } from "@/lib/links";
 
 export default function Header() {
   return (
@@ -16,6 +17,12 @@ export default function Header() {
             className="text-bh-mute hover:text-bh-ink transition-colors"
           >
             Units
+          </Link>
+          <Link
+            href="/wiki/buildings"
+            className="text-bh-mute hover:text-bh-ink transition-colors"
+          >
+            Buildings
           </Link>
           <Link
             href="/wiki/abilities"
@@ -36,7 +43,7 @@ export default function Header() {
             Devlog
           </Link>
           <a
-            href="https://store.steampowered.com/"
+            href={STEAM_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded bg-bh-blood px-3 py-1.5 font-medium text-white hover:bg-bh-bloodInk transition-colors"

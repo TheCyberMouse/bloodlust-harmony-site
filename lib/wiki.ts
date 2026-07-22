@@ -163,6 +163,44 @@ export async function unitsByFaction(): Promise<
   });
 }
 
+/** Buildings grouped per faction, in build-menu order (buildable list, then
+ *  special buildings, then the castle), with upgrade targets folded in after
+ *  the building they upgrade from. */
+export async function buildingsByFaction(): Promise<
+  Array<{ race: WikiRecord; buildings: WikiRecord[] }>
+> {
+  const [races, buildings, upgrades] = await Promise.all([
+    listRaces(),
+    listBuildings(),
+    listUpgrades(),
+  ]);
+  const buildingMap = new Map(buildings.map((b) => [b.id, b]));
+  const upgradeMap = new Map(upgrades.map((u) => [u.id, u]));
+
+  return races.map((race) => {
+    const seen = new Set<string>();
+    const out: WikiRecord[] = [];
+
+    const visit = (buildingId: string | undefined) => {
+      if (!buildingId || seen.has(buildingId)) return;
+      seen.add(buildingId);
+      const b = buildingMap.get(buildingId);
+      if (!b) return;
+      out.push(b);
+      for (const upgId of (b.upgrades as string[]) || []) {
+        const upg = upgradeMap.get(upgId);
+        if (upg) visit(upg.targetBuilding as string | undefined);
+      }
+    };
+
+    for (const id of (race.buildings as string[]) || []) visit(id);
+    for (const id of (race.specialBuildings as string[]) || []) visit(id);
+    visit(race.castle as string | undefined);
+
+    return { race, buildings: out };
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Prose pages (wiki_pages): hand-written lore / guides / devlog, edited via
 // the MCP or /admin. Published rows only — drafts never render.

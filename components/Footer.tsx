@@ -1,3 +1,4 @@
+import { DISCORD_URL, REDDIT_URL, STEAM_URL } from "@/lib/links";
 import { getBuildStamp } from "@/lib/wiki";
 
 export default async function Footer() {
@@ -24,7 +25,7 @@ export default async function Footer() {
             Guides
           </a>
           <a
-            href="https://discord.gg/"
+            href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-bh-ink transition-colors"
@@ -32,12 +33,20 @@ export default async function Footer() {
             Discord
           </a>
           <a
-            href="https://www.reddit.com/r/BloodlustAndHarmony/"
+            href={REDDIT_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-bh-ink transition-colors"
           >
             Reddit
+          </a>
+          <a
+            href={STEAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-bh-ink transition-colors"
+          >
+            Steam
           </a>
           {stamp.version ? (
             <span className="text-xs">
