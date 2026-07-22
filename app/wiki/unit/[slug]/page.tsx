@@ -3,6 +3,7 @@ import IconImg from "@/components/IconImg";
 import TagBadge from "@/components/TagBadge";
 import TypeStat from "@/components/TypeStat";
 import { GameText } from "@/lib/richtext";
+import { iconUrl } from "@/lib/supabase";
 import {
   dpsOf,
   findBySlug,
@@ -79,7 +80,7 @@ export default async function UnitPage({
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
       <div className="flex items-center gap-5">
-        <IconImg file={u.icon} size={72} alt="" />
+        {u.portrait ? null : <IconImg file={u.icon} size={72} alt="" />}
         <div>
           <h1 className="font-display text-4xl">{u.displayName || u.key}</h1>
           {u.unitClass ? (
@@ -107,6 +108,18 @@ export default async function UnitPage({
             ))}
           </div>
         </div>
+        {u.portrait ? (
+          // In-game rendered portrait (transparent PNG from the publish
+          // pipeline); replaces the small icon when available.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={iconUrl(u.portrait as string) ?? undefined}
+            width={176}
+            height={176}
+            alt={u.displayName || u.key}
+            className="ml-auto hidden h-44 w-44 object-contain sm:block"
+          />
+        ) : null}
       </div>
 
       {tooltip?.body ? (
