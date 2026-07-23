@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
+import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import TagBadge from "@/components/TagBadge";
 import TypeStat from "@/components/TypeStat";
 import { GameText } from "@/lib/richtext";
+import { metaDescription, stripGameText } from "@/lib/seo";
 import { iconUrl } from "@/lib/supabase";
 import {
   dpsOf,
@@ -25,6 +28,32 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   const units = await listUnits();
   return units.map((u) => ({ slug: slugOf(u.key) }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const u = await findBySlug("units", params.slug);
+  if (!u) return { title: "Not found", robots: { index: false } };
+
+  const name = u.displayName || u.key;
+  const cls = u.unitClass ? tagLeaf(u.unitClass as string) : "";
+  const description = metaDescription(
+    stripGameText(u.tooltip?.body),
+    u.description,
+    `Stats, abilities, and counters for ${name}${cls ? `, a ${cls} unit` : ""} in Bloodlust & Harmony.`,
+  );
+  const ogTitle = `${name} — Bloodlust & Harmony`;
+  return {
+    title: cls ? `${name}, ${cls} unit` : name,
+    description,
+    alternates: { canonical: `/wiki/unit/${params.slug}` },
+    // No openGraph.images here: this segment's opengraph-image.tsx wins.
+    openGraph: { title: ogTitle, description, type: "article" },
+    twitter: { card: "summary_large_image", title: ogTitle, description },
+  };
 }
 
 export default async function UnitPage({
@@ -80,6 +109,13 @@ export default async function UnitPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Wiki", path: "/wiki" },
+          { name: "Units", path: "/wiki/units" },
+          { name: u.displayName || u.key, path: `/wiki/unit/${params.slug}` },
+        ])}
+      />
       <BackButton fallback="/wiki/units" />
       <div className="flex items-center gap-5">
         <IconImg file={u.icon} size={72} alt="" />

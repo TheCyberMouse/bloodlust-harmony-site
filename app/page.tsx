@@ -2,11 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
 import Slideshow from "@/components/Slideshow";
-import { DISCORD_URL, STEAM_URL } from "@/lib/links";
+import { DISCORD_URL, steamUrl } from "@/lib/links";
 import { listScreenshots } from "@/lib/screenshots";
 import { raceSlug, slugOf, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
+
+export const metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const groups = await unitsByFaction();
@@ -43,7 +47,7 @@ export default async function Home() {
             Join the Discord — play the alpha
           </a>
           <a
-            href={STEAM_URL}
+            href={steamUrl("home_hero")}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded border border-bh-rule px-6 py-3 font-medium text-bh-ink hover:border-bh-mute transition-colors"
@@ -192,14 +196,24 @@ export default async function Home() {
           now are steering balance, factions, and features. Join the Discord,
           request access, and your feedback goes straight into the next build.
         </p>
-        <a
-          href={DISCORD_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-8 inline-block rounded bg-bh-blood px-8 py-3 font-medium text-white hover:bg-bh-bloodInk transition-colors"
-        >
-          Join the Discord
-        </a>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded bg-bh-blood px-8 py-3 font-medium text-white hover:bg-bh-bloodInk transition-colors"
+          >
+            Join the Discord
+          </a>
+          <a
+            href={steamUrl("home_closing")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded border border-bh-rule px-6 py-3 font-medium text-bh-ink hover:border-bh-mute transition-colors"
+          >
+            Wishlist on Steam
+          </a>
+        </div>
       </section>
     </div>
   );

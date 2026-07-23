@@ -12,7 +12,12 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata = { title: "Wiki" };
+export const metadata = {
+  title: "Wiki",
+  description:
+    "The complete Bloodlust & Harmony wiki: every faction, unit, building, ability, and damage interaction, exported straight from the live alpha build.",
+  alternates: { canonical: "/wiki" },
+};
 
 function RefCard({
   href,

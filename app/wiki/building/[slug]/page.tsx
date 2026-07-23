@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
+import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import { GameText } from "@/lib/richtext";
+import { metaDescription, stripGameText } from "@/lib/seo";
 import {
   findBySlug,
   listBuildings,
@@ -21,6 +24,30 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   const buildings = await listBuildings();
   return buildings.map((b) => ({ slug: slugOf(b.key) }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const b = await findBySlug("buildings", params.slug);
+  if (!b) return { title: "Not found", robots: { index: false } };
+
+  const name = b.displayName || b.key;
+  const description = metaDescription(
+    stripGameText(b.tooltip?.body),
+    b.description,
+    `Cost, upgrade path, and the units trained by ${name} in Bloodlust & Harmony.`,
+  );
+  const ogTitle = `${name} — Bloodlust & Harmony`;
+  return {
+    title: `${name}, building`,
+    description,
+    alternates: { canonical: `/wiki/building/${params.slug}` },
+    openGraph: { title: ogTitle, description, type: "article" },
+    twitter: { card: "summary_large_image", title: ogTitle, description },
+  };
 }
 
 export default async function BuildingPage({
@@ -57,6 +84,13 @@ export default async function BuildingPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Wiki", path: "/wiki" },
+          { name: "Buildings", path: "/wiki/buildings" },
+          { name: b.displayName || b.key, path: `/wiki/building/${params.slug}` },
+        ])}
+      />
       <BackButton fallback="/wiki/buildings" />
       <div className="flex items-center gap-5">
         <IconImg file={b.icon} size={72} alt="" />

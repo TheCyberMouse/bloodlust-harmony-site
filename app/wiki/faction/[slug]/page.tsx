@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
+import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import { GameText } from "@/lib/richtext";
+import { metaDescription, stripGameText } from "@/lib/seo";
 import {
   findRaceBySlug,
   listBuildings,
@@ -21,6 +24,31 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   const races = await listRaces();
   return races.map((r) => ({ slug: raceSlug(r) }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const race = await findRaceBySlug(params.slug);
+  if (!race) return { title: "Not found", robots: { index: false } };
+
+  const name = race.displayName || race.key;
+  const description = metaDescription(
+    race.description,
+    stripGameText(race.tooltip?.body),
+    `${name} faction guide: leader, buildings, full unit roster, and researches.`,
+  );
+  const ogTitle = `${name} — Bloodlust & Harmony faction`;
+  return {
+    title: `${name} faction`,
+    description,
+    // Canonicalize legacy DA-key slugs to the display-name URL.
+    alternates: { canonical: `/wiki/faction/${raceSlug(race)}` },
+    openGraph: { title: ogTitle, description, type: "article" },
+    twitter: { card: "summary_large_image", title: ogTitle, description },
+  };
 }
 
 function byId(records: WikiRecord[]): Map<string, WikiRecord> {
@@ -97,6 +125,16 @@ export default async function FactionPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Wiki", path: "/wiki" },
+          { name: "Factions", path: "/wiki/factions" },
+          {
+            name: race.displayName || race.key,
+            path: `/wiki/faction/${raceSlug(race)}`,
+          },
+        ])}
+      />
       <BackButton fallback="/wiki" />
       <div className="flex items-center gap-5">
         <IconImg file={race.icon} size={72} alt="" />

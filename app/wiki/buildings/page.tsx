@@ -4,7 +4,19 @@ import { buildingsByFaction, raceSlug, slugOf, type WikiRecord } from "@/lib/wik
 
 export const revalidate = 3600;
 
-export const metadata = { title: "All buildings" };
+export async function generateMetadata() {
+  const groups = await buildingsByFaction();
+  const n = groups.reduce(
+    (s, g) =>
+      s + g.mainTrees.flat().length + g.specialTrees.flat().length + g.castleTree.length,
+    0,
+  );
+  return {
+    title: "All buildings",
+    description: `Costs, upgrade trees, and trained units for all ${n} buildings in Bloodlust & Harmony. Plan your build order before your next match.`,
+    alternates: { canonical: "/wiki/buildings" },
+  };
+}
 
 function roleOf(b: Record<string, unknown>): string {
   if (b.isCastle) return "Castle";

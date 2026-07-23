@@ -14,7 +14,17 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata = { title: "All abilities" };
+export async function generateMetadata() {
+  const abilities = await listAbilities();
+  const n = abilities.filter(
+    (a) => a.displayName && a.displayName !== a.key,
+  ).length;
+  return {
+    title: "All abilities",
+    description: `All ${n} spells, passives, and autocasts in Bloodlust & Harmony with real in-game tooltips, and the units that carry them.`,
+    alternates: { canonical: "/wiki/abilities" },
+  };
+}
 
 type ResolvedUser = {
   label: string;

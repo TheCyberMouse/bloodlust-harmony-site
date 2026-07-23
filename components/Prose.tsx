@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
+import JsonLd, { articleLd, breadcrumbLd } from "@/components/JsonLd";
 import type { ProsePage } from "@/lib/wiki";
 
 /**
@@ -78,15 +79,23 @@ export function ProseIndex({
 }
 
 export function ProseArticle({ page }: { page: ProsePage }) {
-  const fallback =
+  const section =
     page.category === "lore"
-      ? "/lore"
+      ? { base: "/lore", label: "Lore" }
       : page.category === "devlog"
-        ? "/devlog"
-        : "/guides";
+        ? { base: "/devlog", label: "Devlog" }
+        : { base: "/guides", label: "Guides" };
+  const path = `${section.base}/${page.slug}`;
   return (
     <article className="mx-auto max-w-4xl px-4 py-14">
-      <BackButton fallback={fallback} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: section.label, path: section.base },
+          { name: page.title, path },
+        ])}
+      />
+      <JsonLd data={articleLd(page, path)} />
+      <BackButton fallback={section.base} />
       <h1 className="font-display text-4xl">{page.title}</h1>
       <p className="mt-2 text-xs text-bh-mute">
         Updated{" "}

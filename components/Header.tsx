@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { STEAM_URL } from "@/lib/links";
+import { steamUrl } from "@/lib/links";
 
 const LINKS = [
   { href: "/", label: "About" },
@@ -46,7 +46,7 @@ export default function Header() {
             </Link>
           ))}
           <a
-            href={STEAM_URL}
+            href={steamUrl("header", "desktop")}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded bg-bh-blood px-3 py-1.5 font-medium text-white hover:bg-bh-bloodInk transition-colors"
@@ -81,7 +81,7 @@ export default function Header() {
             </Link>
           ))}
           <a
-            href={STEAM_URL}
+            href={steamUrl("header", "mobile")}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}

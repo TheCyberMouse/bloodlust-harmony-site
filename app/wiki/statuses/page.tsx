@@ -4,7 +4,12 @@ import { listStatuses, type WikiRecord } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
-export const metadata = { title: "Status effects" };
+export const metadata = {
+  title: "Status effects",
+  description:
+    "All status effects in Bloodlust & Harmony: stuns, burns, chills, curses, auras, and the buffs that answer them.",
+  alternates: { canonical: "/wiki/statuses" },
+};
 
 // Aura tags follow a naming convention: Status.AuraSource.X marks the unit
 // PROJECTING the aura; Status.Aura.X is the effect nearby units receive.

@@ -3,7 +3,12 @@ import { getWikiMeta, matrixTone, tagLeaf } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
-export const metadata = { title: "Damage matrix" };
+export const metadata = {
+  title: "Damage matrix",
+  description:
+    "The full attack-vs-armor damage table for Bloodlust & Harmony, plus armor formulas and exactly how every hit is calculated.",
+  alternates: { canonical: "/wiki/matrix" },
+};
 
 export default async function MatrixPage() {
   const meta = await getWikiMeta();

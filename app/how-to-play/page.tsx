@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { DISCORD_URL } from "@/lib/links";
+import { DISCORD_URL, steamUrl } from "@/lib/links";
 
-export const metadata = { title: "How to play" };
+export const metadata = {
+  title: "How to play",
+  description:
+    "Learn Bloodlust & Harmony in five minutes: income, waves, build order, and counters. Everything you need to win a first match and join the alpha.",
+  alternates: { canonical: "/how-to-play" },
+};
 
 function Section({
   title,
@@ -159,6 +164,14 @@ export default function HowToPlayPage() {
             className="rounded bg-bh-blood px-6 py-2.5 font-medium text-white hover:bg-bh-bloodInk transition-colors"
           >
             Join the Discord
+          </a>
+          <a
+            href={steamUrl("how_to_play")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded border border-bh-rule px-6 py-2.5 font-medium text-bh-ink hover:border-bh-mute transition-colors"
+          >
+            Wishlist on Steam
           </a>
           <Link
             href="/wiki"

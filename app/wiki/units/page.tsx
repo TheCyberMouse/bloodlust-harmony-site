@@ -11,7 +11,15 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata = { title: "All units" };
+export async function generateMetadata() {
+  const groups = await unitsByFaction();
+  const n = groups.reduce((s, g) => s + g.units.length + g.summons.length, 0);
+  return {
+    title: "All units",
+    description: `Stats, DPS, abilities, and counters for all ${n} units in Bloodlust & Harmony, updated automatically from the current alpha build.`,
+    alternates: { canonical: "/wiki/units" },
+  };
+}
 
 function UnitCard({ u }: { u: WikiRecord }) {
   const stats = (u.stats as Record<string, number>) || {};

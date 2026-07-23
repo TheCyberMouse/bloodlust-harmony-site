@@ -4,7 +4,12 @@ import { raceSlug, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
-export const metadata = { title: "Factions" };
+export const metadata = {
+  title: "Factions",
+  description:
+    "Compare every playable faction in Bloodlust & Harmony: playstyle, leader, buildings, and full unit roster.",
+  alternates: { canonical: "/wiki/factions" },
+};
 
 export default async function FactionsIndex() {
   const groups = await unitsByFaction();

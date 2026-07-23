@@ -14,16 +14,19 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   title: {
-    default: "Bloodlust & Harmony",
+    default: "Bloodlust & Harmony: Castle Fight-Style Auto Battler RTS",
     template: "%s — Bloodlust & Harmony",
   },
   description:
-    "A Castle Fight-style auto-battler RTS. Your buildings spawn endless waves that march on the enemy castle. Win through build order, economy, and counters, not clicks.",
+    "A Castle Fight-style auto-battler RTS. Your buildings spawn endless waves that march on the enemy castle. Win through build order, economy, and counters, not clicks. Free alpha: join the Discord and wishlist on Steam.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
     siteName: "Bloodlust & Harmony",
     url: SITE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
@@ -35,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${cinzel.variable}`}>
       <body className="min-h-screen flex flex-col bg-bh-night text-bh-ink font-sans">
-        <JsonLd data={siteGraph} />
+        <JsonLd data={siteGraph()} />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

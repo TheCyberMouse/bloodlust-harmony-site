@@ -1,4 +1,4 @@
-import { DISCORD_URL, REDDIT_URL, STEAM_URL } from "@/lib/links";
+import { DISCORD_URL, REDDIT_URL, steamUrl } from "@/lib/links";
 import { getBuildStamp } from "@/lib/wiki";
 
 export default async function Footer() {
@@ -41,7 +41,7 @@ export default async function Footer() {
             Reddit
           </a>
           <a
-            href={STEAM_URL}
+            href={steamUrl("footer")}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-bh-ink transition-colors"
