@@ -13,6 +13,37 @@ body {
     #0c0a10;
 }
 
+/* Hand-written prose pages (lore/guides/devlog) arrive as raw HTML from the
+   database. Tailwind's JIT never sees that HTML, so element-level styles for
+   long-form posts live here instead of utility classes. */
+.prose-body h2 {
+  font-family: var(--font-cinzel);
+  font-size: 1.5rem;
+  color: #e9e4d8;
+  margin-top: 2.5rem;
+}
+.prose-body h3 {
+  font-family: var(--font-cinzel);
+  font-size: 1.125rem;
+  color: #c9a860;
+  margin-top: 1.75rem;
+}
+.prose-body a { color: #c22d36; text-decoration: underline; text-underline-offset: 3px; }
+.prose-body a:hover { color: #8f1f27; }
+.prose-body strong { color: #e9e4d8; }
+.prose-body ul, .prose-body ol { padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.prose-body ul { list-style: disc; }
+.prose-body ol { list-style: decimal; }
+.prose-body blockquote {
+  border-left: 3px solid #282334;
+  padding-left: 1rem;
+  color: #8d8798;
+  font-style: italic;
+}
+.prose-body table { border-collapse: collapse; font-size: 0.9rem; width: 100%; }
+.prose-body th, .prose-body td { border: 1px solid #282334; padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+.prose-body th { color: #c9a860; font-weight: 600; }
+
 /* Game rich-text decorators. The export keeps the in-game markup
    (<dmg>14</> etc.); lib/richtext.tsx maps each tag to one of these. */
 .rt-dmg { color: #e05252; font-weight: 600; }
