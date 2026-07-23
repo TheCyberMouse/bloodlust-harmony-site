@@ -32,8 +32,15 @@ export default function HowToPlayPage() {
       <p className="mt-3 max-w-prose text-lg text-bh-mute">
         Bloodlust &amp; Harmony is an auto-battler RTS. You never control your
         units. You build the machine that produces them, and the machine goes
-        to war on its own. This page covers everything you need for your first
-        match.
+        to war on its own. The basics below describe{" "}
+        <Link
+          href="/wiki/modes/regular"
+          className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+        >
+          Regular
+        </Link>
+        , the classic mode. Once they click, the other modes are quick twists
+        on the same loop.
       </p>
 
       <Section title="The goal">
@@ -134,10 +141,74 @@ export default function HowToPlayPage() {
       <Section title="Match setup">
         <p>
           Single player: New Game gives you a 1v1 against an AI opponent.
-          Multiplayer: Create Server lets you set team count, players per
-          team, wave mode, fog of war, and the round limit; friends join from
-          the server browser. Quickplay is the ranked queue: pick a faction,
-          get matched 1v1, and your rating moves with the result.
+          Multiplayer: Create Server lets you set the{" "}
+          <Link
+            href="/wiki/modes"
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            game mode
+          </Link>
+          , team count, players per team, wave mode, fog of war, and the round
+          limit; friends join from the server browser. Quickplay is the ranked
+          queue: pick a faction, get matched 1v1, and your rating moves with
+          the result. Quickplay is always Regular, so modes never touch your
+          rank.
+        </p>
+      </Section>
+
+      <Section title="Other ways to play">
+        <p>
+          Everything above is Regular. The other four modes reuse the same
+          combat, economy, and factions, and change how you get your buildings
+          or where the fight happens.
+        </p>
+        <ul className="space-y-3">
+          {[
+            {
+              href: "/wiki/modes/ultimate",
+              name: "Ultimate",
+              blurb:
+                "Everyone shares one faction and is dealt a random set of 13 buildings. Win with the hand you are given.",
+            },
+            {
+              href: "/wiki/modes/draft",
+              name: "Draft",
+              blurb:
+                "Ban a building, then snake-draft your whole build set from a shared pool before the first wave. Deny your rival's synergy.",
+            },
+            {
+              href: "/wiki/modes/poker",
+              name: "Poker",
+              blurb:
+                "Free-for-all army poker for 2 to 9 players. Bet chips on a hidden army, and let the pit decide the showdown. Last chip stack wins.",
+            },
+            {
+              href: "/wiki/modes/sandbox",
+              name: "Sandbox",
+              blurb:
+                "A no-rules playground. Spawn any units on up to nine sides and watch them fight. Great for testing matchups.",
+            },
+          ].map((m) => (
+            <li key={m.href}>
+              <Link
+                href={m.href}
+                className="font-medium text-bh-blood hover:text-bh-bloodInk transition-colors"
+              >
+                {m.name}
+              </Link>
+              <span className="text-bh-mute">: {m.blurb}</span>
+            </li>
+          ))}
+        </ul>
+        <p>
+          Full rules for all five are on the{" "}
+          <Link
+            href="/wiki/modes"
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            game modes page
+          </Link>
+          .
         </p>
       </Section>
 
