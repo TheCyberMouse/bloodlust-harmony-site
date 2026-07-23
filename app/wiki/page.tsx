@@ -131,6 +131,17 @@ export default async function WikiHub() {
           blurb="Spells, passives, and autocasts A to Z, with the units and buildings that carry them."
         />
         <RefCard
+          href="/wiki/researches"
+          title="All researches"
+          count={`${researches.length}`}
+          blurb="Tiered match-long upgrades per faction: what each one does and what every tier costs."
+        />
+        <RefCard
+          href="/wiki/shop"
+          title="Shop items"
+          blurb="Resource trades and team buffs from the Shop tab, with costs and cooldowns."
+        />
+        <RefCard
           href="/wiki/matrix"
           title="Damage matrix"
           blurb="The attack-vs-armor chart, the armor formulas, elements, and exactly how a hit is calculated."

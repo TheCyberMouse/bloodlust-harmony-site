@@ -1,13 +1,7 @@
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
-import {
-  dpsOf,
-  raceSlug,
-  slugOf,
-  tagLeaf,
-  unitsByFaction,
-  type WikiRecord,
-} from "@/lib/wiki";
+import UnitCard, { UnitTreeRows } from "@/components/UnitCard";
+import { raceSlug, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -19,33 +13,6 @@ export async function generateMetadata() {
     description: `Stats, DPS, abilities, and counters for all ${n} units in Bloodlust & Harmony, updated automatically from the current alpha build.`,
     alternates: { canonical: "/wiki/units" },
   };
-}
-
-function UnitCard({ u }: { u: WikiRecord }) {
-  const stats = (u.stats as Record<string, number>) || {};
-  const dps = dpsOf(stats);
-  return (
-    <Link
-      href={`/wiki/unit/${slugOf(u.key)}`}
-      className="group flex items-center gap-3 rounded-lg border border-bh-rule bg-bh-panel p-3 hover:border-bh-blood transition-colors"
-    >
-      <IconImg file={u.icon} size={44} alt="" />
-      <div className="min-w-0">
-        <div className="font-medium truncate group-hover:text-bh-blood transition-colors">
-          {u.displayName || u.key}
-        </div>
-        <div className="text-xs text-bh-mute truncate">
-          {[
-            u.unitClass ? tagLeaf(u.unitClass as string) : null,
-            stats.MaxHealth ? `${stats.MaxHealth} HP` : null,
-            dps !== null ? `${dps} DPS` : null,
-          ]
-            .filter(Boolean)
-            .join(" · ")}
-        </div>
-      </div>
-    </Link>
-  );
 }
 
 export default async function UnitsIndex() {
@@ -73,32 +40,7 @@ export default async function UnitsIndex() {
               </h2>
               <span className="text-sm text-bh-mute">{units.length} units</span>
             </div>
-            {/* One row per tech tree (a spawner and its upgrades); units from
-                single-unit trees pool together at the end. */}
-            <div className="space-y-3">
-              {unitTrees
-                .filter((t) => t.length > 1)
-                .map((tree) => (
-                  <div
-                    key={tree[0].id}
-                    className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-                  >
-                    {tree.map((u) => (
-                      <UnitCard key={u.id} u={u} />
-                    ))}
-                  </div>
-                ))}
-              {unitTrees.filter((t) => t.length === 1).flat().length > 0 ? (
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {unitTrees
-                    .filter((t) => t.length === 1)
-                    .flat()
-                    .map((u) => (
-                      <UnitCard key={u.id} u={u} />
-                    ))}
-                </div>
-              ) : null}
-            </div>
+            <UnitTreeRows trees={unitTrees} />
 
             {summons.length > 0 ? (
               <>

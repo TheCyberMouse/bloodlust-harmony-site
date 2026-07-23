@@ -6,6 +6,7 @@ import IconImg from "@/components/IconImg";
 import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import { GameText } from "@/lib/richtext";
 import { metaDescription, stripGameText } from "@/lib/seo";
+import UnitCard, { UnitTreeRows } from "@/components/UnitCard";
 import {
   findRaceBySlug,
   listBuildings,
@@ -15,6 +16,7 @@ import {
   listUnits,
   raceSlug,
   slugOf,
+  unitsByFaction,
   type WikiRecord,
 } from "@/lib/wiki";
 
@@ -95,12 +97,15 @@ export default async function FactionPage({
   const race = await findRaceBySlug(params.slug);
   if (!race) notFound();
 
-  const [buildings, units, researches, shopItems] = await Promise.all([
-    listBuildings(),
-    listUnits(),
-    listResearches(),
-    listShopItems(),
-  ]);
+  const [buildings, units, researches, shopItems, unitGroups] =
+    await Promise.all([
+      listBuildings(),
+      listUnits(),
+      listResearches(),
+      listShopItems(),
+      unitsByFaction(),
+    ]);
+  const unitGroup = unitGroups.find((g) => g.race.id === race.id);
   const buildingMap = byId(buildings);
   const unitMap = byId(units);
   const researchMap = byId(researches);
@@ -196,6 +201,33 @@ export default async function FactionPage({
               <BuildingCard key={b.id} b={b} spawnedUnit={spawnedOf(b)} />
             ))}
           </div>
+        </>
+      ) : null}
+
+      {unitGroup && unitGroup.units.length > 0 ? (
+        <>
+          <h2 className="font-display text-2xl mt-12 mb-4">
+            Units{" "}
+            <span className="text-sm font-sans text-bh-mute">
+              {unitGroup.units.length} in the roster
+            </span>
+          </h2>
+          <UnitTreeRows trees={unitGroup.unitTrees} />
+          {unitGroup.summons.length > 0 ? (
+            <>
+              <div className="mt-6 mb-3 flex items-baseline gap-3">
+                <h3 className="font-display text-lg text-bh-gold">Summons</h3>
+                <span className="text-xs text-bh-mute">
+                  Called into battle by abilities, not built.
+                </span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {unitGroup.summons.map((u) => (
+                  <UnitCard key={u.id} u={u} />
+                ))}
+              </div>
+            </>
+          ) : null}
         </>
       ) : null}
 

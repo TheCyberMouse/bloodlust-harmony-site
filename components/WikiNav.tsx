@@ -34,6 +34,16 @@ const TABS: Array<{
     isActive: (p) => p.startsWith("/wiki/abilities"),
   },
   {
+    href: "/wiki/researches",
+    label: "Researches",
+    isActive: (p) => p.startsWith("/wiki/researches"),
+  },
+  {
+    href: "/wiki/shop",
+    label: "Shop",
+    isActive: (p) => p.startsWith("/wiki/shop"),
+  },
+  {
     href: "/wiki/matrix",
     label: "Damage Matrix",
     isActive: (p) => p.startsWith("/wiki/matrix"),

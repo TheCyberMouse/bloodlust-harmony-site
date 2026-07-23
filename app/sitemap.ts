@@ -66,6 +66,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${SITE_URL}/wiki/researches`,
+      lastModified: dataMod,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${SITE_URL}/wiki/shop`,
+      lastModified: dataMod,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       url: `${SITE_URL}/wiki/matrix`,
       lastModified: dataMod,
       changeFrequency: "weekly",
