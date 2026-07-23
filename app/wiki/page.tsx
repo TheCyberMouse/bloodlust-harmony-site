@@ -80,6 +80,24 @@ export default async function WikiHub() {
         </Link>
       </p>
 
+      <Link
+        href="/wiki/modes"
+        className="group mt-10 block rounded-lg border border-bh-rule bg-bh-panel p-5 hover:border-bh-blood transition-colors"
+      >
+        <div className="flex items-baseline gap-3">
+          <h2 className="font-display text-xl group-hover:text-bh-blood transition-colors">
+            Game modes
+          </h2>
+          <span className="text-sm text-bh-mute">
+            Regular · Ultimate · Draft · Poker · Sandbox
+          </span>
+        </div>
+        <p className="mt-1.5 text-sm text-bh-mute">
+          Five ways to play, from the classic Castle Fight loop to army poker.
+          How each one works and when to pick it.
+        </p>
+      </Link>
+
       <h2 className="font-display text-2xl mt-12 mb-6">Factions</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {races.map((race) => {

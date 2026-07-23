@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/components/JsonLd";
+import { GAME_MODES } from "@/lib/modes";
 import {
   getBuildStamp,
   listBuildings,
@@ -41,6 +42,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: `${SITE_URL}/wiki/modes`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...GAME_MODES.map((m) => ({
+      url: `${SITE_URL}/wiki/modes/${m.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
     {
       url: `${SITE_URL}/wiki/factions`,
       lastModified: dataMod,

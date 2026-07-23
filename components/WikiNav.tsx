@@ -14,6 +14,11 @@ const TABS: Array<{
     isActive: (p) => p === "/wiki",
   },
   {
+    href: "/wiki/modes",
+    label: "Game Modes",
+    isActive: (p) => p.startsWith("/wiki/modes"),
+  },
+  {
     href: "/wiki/factions",
     label: "Factions",
     isActive: (p) => p.startsWith("/wiki/faction"),
