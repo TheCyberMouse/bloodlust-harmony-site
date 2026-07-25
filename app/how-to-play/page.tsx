@@ -30,9 +30,9 @@ export default function HowToPlayPage() {
     <div className="mx-auto max-w-4xl px-4 py-14">
       <h1 className="font-display text-4xl">How to play</h1>
       <p className="mt-3 max-w-prose text-lg text-bh-mute">
-        Bloodlust &amp; Harmony is an auto-battler RTS. You never control your
-        units. You build the machine that produces them, and the machine goes
-        to war on its own. The basics below describe{" "}
+        Bloodlust &amp; Harmony is a Castle Fight-style auto-battler. You never
+        control your units. You build the machine that produces them, and the
+        machine goes to war on its own. The basics below describe{" "}
         <Link
           href="/wiki/modes/regular"
           className="text-bh-blood hover:text-bh-bloodInk transition-colors"

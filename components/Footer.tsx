@@ -15,7 +15,7 @@ export default async function Footer() {
     <footer className="border-t border-bh-rule mt-16">
       <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-bh-mute">
         <div>
-          Bloodlust &amp; Harmony. A solo-developed auto-battler RTS.
+          Bloodlust &amp; Harmony. A solo-developed auto-battler.
         </div>
         <div className="flex items-center gap-4">
           <a href="/lore" className="hover:text-bh-ink transition-colors">

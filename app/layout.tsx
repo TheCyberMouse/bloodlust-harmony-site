@@ -14,11 +14,11 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   title: {
-    default: "Bloodlust & Harmony: Castle Fight-Style Auto Battler RTS",
+    default: "Bloodlust & Harmony: Castle Fight-Style Auto Battler",
     template: "%s — Bloodlust & Harmony",
   },
   description:
-    "A Castle Fight-style auto-battler RTS. Your buildings spawn endless waves that march on the enemy castle. Win through build order, economy, and counters, not clicks. Free alpha: join the Discord and wishlist on Steam.",
+    "A Castle Fight-style auto-battler. Your buildings spawn endless waves that march on the enemy castle. Win through build order, economy, and counters, not clicks. Free alpha: join the Discord and wishlist on Steam.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",

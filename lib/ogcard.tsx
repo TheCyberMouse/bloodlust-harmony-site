@@ -145,6 +145,6 @@ export async function renderOgCard(opts: {
 export function brandedFallback(): Promise<ImageResponse> {
   return renderOgCard({
     title: "Bloodlust & Harmony",
-    subtitle: "Castle Fight-style auto battler RTS",
+    subtitle: "Castle Fight-style auto battler",
   });
 }

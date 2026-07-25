@@ -183,7 +183,7 @@ export const GAME_MODES: GameMode[] = [
             items: [
               "**2 to 9 players, every seat for itself.** Teams do not exist here, so the lobby shows one flat Players list.",
               "Everyone starts with the same chip stack. The match is a tournament: lose your chips and you are eliminated but keep spectating, and the last player holding chips wins.",
-              "It is played on a dedicated arena: one circular **pit**, no castles, no build zones, no economy. Chips are the only currency, and the usual RTS interface is replaced by a poker HUD showing your cards, the seats, the pot, the blinds, and your action buttons.",
+              "It is played on a dedicated arena: one circular **pit**, no castles, no build zones, no economy. Chips are the only currency, and the usual game interface is replaced by a poker HUD showing your cards, the seats, the pot, the blinds, and your action buttons.",
             ],
           },
         ],
@@ -247,7 +247,7 @@ export const GAME_MODES: GameMode[] = [
           {
             type: "ul",
             items: [
-              "An open arena with the RTS interface hidden and a **spawn palette** in its place, listing every unit in the game grouped by its faction.",
+              "An open arena with the normal game interface hidden and a **spawn palette** in its place, listing every unit in the game grouped by its faction.",
               "Pick a unit, set a count from 1 to 50, pick one of **nine free-for-all sides** (every side is hostile to every other), then **click the ground** to stamp that army. Click again to place more, and right-click to stop.",
               "Spawned armies fight on their own with the full game AI, stats, abilities, and passives. It is the live game simulation, just fed by hand.",
               "**Clear All** removes every unit through the normal death path, corpses and all.",

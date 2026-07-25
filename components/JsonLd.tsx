@@ -21,7 +21,7 @@ export function siteGraph() {
         url: SITE_URL,
         image: `${SITE_URL}/opengraph-image.jpg`,
         screenshot: listScreenshots().map((s) => `${SITE_URL}${s.src}`),
-        genre: ["Real-time strategy", "Auto battler"],
+        genre: ["Auto battler", "Strategy"],
         gamePlatform: "PC",
         operatingSystem: "Windows",
         applicationCategory: "GameApplication",
@@ -30,7 +30,7 @@ export function siteGraph() {
         publisher: AUTHOR,
         sameAs: [STEAM_URL, DISCORD_URL, REDDIT_URL],
         description:
-          "A Castle Fight-style auto-battler RTS. Your buildings spawn endless waves that march on the enemy castle. You win through build order, economy, and counters, not clicks.",
+          "A Castle Fight-style auto-battler. Your buildings spawn endless waves that march on the enemy castle. You win through build order, economy, and counters, not clicks.",
       },
       {
         "@type": "WebSite",
