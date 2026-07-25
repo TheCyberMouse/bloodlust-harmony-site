@@ -55,8 +55,8 @@ export default function ModesOverview() {
         <h2 className="font-display text-xl mb-3">Good to know</h2>
         <ul className="ml-5 list-disc space-y-2 text-bh-mute leading-relaxed">
           <li>
-            Every non-Regular mode locks the race picker, since the faction is
-            shared or unused. Poker and Sandbox go further and flatten the
+            Every non-Regular mode locks the faction picker, since the faction
+            is shared or unused. Poker and Sandbox go further and flatten the
             lobby into one free-for-all Players list.
           </li>
           <li>

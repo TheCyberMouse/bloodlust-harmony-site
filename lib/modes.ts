@@ -58,7 +58,7 @@ export const GAME_MODES: GameMode[] = [
         blocks: [
           {
             type: "p",
-            text: "Pick your race, color, and team in the lobby and ready up. Castles and build zones are assigned, then income and waves begin. From there it is all reaction: build, upgrade, research, and answer whatever composition the other side is massing. When a team's castle falls they are out, and the last castle standing takes the match. A round limit and sudden-death rules resolve any stalemate.",
+            text: "Pick your faction, color, and team in the lobby and ready up. Castles and build zones are assigned, then income and waves begin. From there it is all reaction: build, upgrade, research, and answer whatever composition the other side is massing. When a team's castle falls they are out, and the last castle standing takes the match. A round limit and sudden-death rules resolve any stalemate.",
           },
         ],
       },
@@ -68,7 +68,7 @@ export const GAME_MODES: GameMode[] = [
     slug: "ultimate",
     name: "Ultimate",
     tagline:
-      "Everyone plays one shared cross-faction race and is dealt a random build set.",
+      "Everyone plays one shared faction and is dealt a random build set.",
     summary:
       "A shared cross-faction pool deals you a random 13-building set. No comfort picks, just the strongest line inside what you were dealt.",
     glance: {
@@ -84,7 +84,7 @@ export const GAME_MODES: GameMode[] = [
           {
             type: "ul",
             items: [
-              "Every seat, human and bot, is forced onto the **Ultimate race**, a special faction whose building pool spans every race in the game. The lobby shows Ultimate on every row and locks the race picker.",
+              "Every seat, human and bot, is forced onto the **Ultimate faction**, whose building pool spans every faction in the game. The lobby shows Ultimate on every row and locks the faction picker.",
               {
                 text: "At match start each player independently rolls a **13-building set** from that pool:",
                 sub: [
@@ -96,7 +96,7 @@ export const GAME_MODES: GameMode[] = [
               },
               "Within those 13, **2 picks are guaranteed to be stardust units**, meaning units that cost stardust themselves or whose upgrade chain reaches one (the Elven Archer counts through its Stormbow upgrade).",
               "Your hotbar shows only your rolled set, one-food row above two-food row. Upgrade chains ride along: roll the base building and its upgrades are reachable.",
-              "Researches, the shop, and the castle come from the Ultimate race's own curated lists, shared by everyone.",
+              "Researches, the shop, and the castle come from the Ultimate faction's own curated lists, shared by everyone.",
               "Otherwise it plays exactly like Regular: same castles, waves, economy, and win condition.",
             ],
           },
@@ -133,7 +133,7 @@ export const GAME_MODES: GameMode[] = [
           {
             type: "ul",
             items: [
-              "Like Ultimate, every seat plays a shared cross-faction race. But instead of a random roll you **choose** your buildings on a full-screen draft board while the match clocks are held.",
+              "Like Ultimate, every seat plays a shared faction. But instead of a random roll you **choose** your buildings on a full-screen draft board while the match clocks are held.",
               "**Ban round first.** In turn order, each player bans one building from the pool or skips. Bans are permanent and visible to everyone.",
               "**Snake draft second.** Pick order runs 1 to N then N to 1, repeating. Each pick is exclusive, so a taken building greys out for everyone.",
               {

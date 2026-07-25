@@ -93,7 +93,7 @@ const SECTIONS: Section[] = [
     blocks: [
       {
         type: "p",
-        text: "The game saves your **settings, preferences, chosen display name, race and color, and cached rank** locally so it can remember them between sessions. This stays on your device and is removed when you delete the save or uninstall the game.",
+        text: "The game saves your **settings, preferences, chosen display name, faction and color, and cached rank** locally so it can remember them between sessions. This stays on your device and is removed when you delete the save or uninstall the game.",
       },
     ],
   },
