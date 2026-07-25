@@ -45,6 +45,12 @@ export default function Header() {
               {l.label}
             </Link>
           ))}
+          <Link
+            href="/alpha"
+            className="font-medium text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            Play the Alpha
+          </Link>
           <a
             href={steamUrl("header", "desktop")}
             target="_blank"
@@ -80,6 +86,13 @@ export default function Header() {
               {l.label}
             </Link>
           ))}
+          <Link
+            href="/alpha"
+            onClick={() => setOpen(false)}
+            className="py-2.5 font-medium text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            Play the Alpha
+          </Link>
           <a
             href={steamUrl("header", "mobile")}
             target="_blank"
