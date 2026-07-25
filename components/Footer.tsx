@@ -48,6 +48,9 @@ export default async function Footer() {
           >
             Steam
           </a>
+          <a href="/privacy" className="hover:text-bh-ink transition-colors">
+            Privacy
+          </a>
           {stamp.version ? (
             <span className="text-xs">
               Game data v{stamp.version}
