@@ -14,7 +14,7 @@ export default async function LoreIndex() {
   return (
     <ProseIndex
       title="Lore"
-      intro="Histories of the factions and the world they bleed over."
+      intro="A grim high-fantasy world torn between two souls, Harmony and Bloodlust. Start with the cosmology, then read the factions and the wars that bind them."
       basePath="/lore"
       pages={pages}
     />
