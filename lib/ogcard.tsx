@@ -149,6 +149,73 @@ export function brandedFallback(): Promise<ImageResponse> {
   });
 }
 
+/** The flagship home / site-wide share card: the wordmark in the logo's own
+ *  colors (Bloodlust red, Harmony gold), the tagline, and the faction crests. */
+export async function renderHomeCard(
+  icons: ArrayBuffer[],
+): Promise<ImageResponse> {
+  const fonts = await cinzel();
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: C.night,
+          color: C.ink,
+          fontFamily: "Cinzel",
+          padding: 72,
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 26, color: C.blood, letterSpacing: 6 }}>
+            CASTLE FIGHT AUTO-BATTLER RTS
+          </div>
+          <div style={{ display: "flex", fontSize: 82, marginTop: 18 }}>
+            <span style={{ color: C.blood }}>Bloodlust</span>
+            <span style={{ color: C.ink, padding: "0 16px" }}>&amp;</span>
+            <span style={{ color: C.gold }}>Harmony</span>
+          </div>
+          <div style={{ fontSize: 36, color: C.ink, marginTop: 22 }}>
+            Build the army. Send the waves. Take the castle.
+          </div>
+        </div>
+        {icons.length > 0 ? (
+          <div style={{ display: "flex", gap: 20 }}>
+            {icons.slice(0, 5).map((buf, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 118,
+                  height: 118,
+                  background: C.panel,
+                  border: `2px solid ${C.rule}`,
+                  borderRadius: 16,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                <img
+                  src={buf as unknown as string}
+                  width={94}
+                  height={94}
+                  style={{ objectFit: "contain", borderRadius: 10 }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    ),
+    { ...OG_SIZE, fonts },
+  );
+}
+
 /** Fetch up to `max` icons from a list of candidate URLs. De-dupes by URL so
  *  units that share art never appear twice, and skips any that fail so the
  *  card still renders with whatever loaded. */

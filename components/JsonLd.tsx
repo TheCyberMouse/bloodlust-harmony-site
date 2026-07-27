@@ -22,7 +22,7 @@ export function siteGraph() {
         "@id": `${SITE_URL}/#game`,
         name: "Bloodlust & Harmony",
         url: SITE_URL,
-        image: `${SITE_URL}/opengraph-image.jpg`,
+        image: `${SITE_URL}/opengraph-image`,
         screenshot: listScreenshots().map((s) => `${SITE_URL}${s.src}`),
         genre: ["Auto battler", "Strategy"],
         gamePlatform: "PC",
@@ -72,7 +72,7 @@ export function articleLd(page: ProsePage, path: string) {
     dateModified: page.updated_at,
     author: AUTHOR,
     mainEntityOfPage: `${SITE_URL}${path}`,
-    image: `${SITE_URL}/opengraph-image.jpg`,
+    image: `${SITE_URL}/opengraph-image`,
   };
 }
 

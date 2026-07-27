@@ -16,6 +16,7 @@ const nextConfig = {
       // Every opengraph-image route readFiles the vendored Cinzel font;
       // trace it into each so ISR regeneration on Vercel doesn't 500.
       "/**/opengraph-image": ["./assets/fonts/**/*"],
+      "/opengraph-image": ["./assets/fonts/**/*"],
       "/wiki/unit/[slug]/opengraph-image": ["./assets/fonts/**/*"],
       "/wiki/faction/[slug]/opengraph-image": ["./assets/fonts/**/*"],
       "/how-to-play/opengraph-image": ["./assets/fonts/**/*"],
