@@ -148,3 +148,165 @@ export function brandedFallback(): Promise<ImageResponse> {
     subtitle: "Castle Fight-style auto battler",
   });
 }
+
+/** Fetch up to `max` icons from a list of candidate URLs. De-dupes by URL so
+ *  units that share art never appear twice, and skips any that fail so the
+ *  card still renders with whatever loaded. */
+export async function fetchIcons(
+  urls: Array<string | null | undefined>,
+  max = 6,
+): Promise<ArrayBuffer[]> {
+  const seen = new Set<string>();
+  const candidates: string[] = [];
+  for (const u of urls) {
+    if (!u || seen.has(u)) continue;
+    seen.add(u);
+    candidates.push(u);
+    if (candidates.length >= max * 2) break;
+  }
+  const results = await Promise.all(candidates.map((u) => fetchOgImage(u)));
+  return results
+    .filter((b): b is ArrayBuffer => b !== null)
+    .slice(0, max);
+}
+
+/** Multiplier -> solid swatch color, for the damage-matrix share card. */
+export function matrixToneHex(m: number): string {
+  if (m >= 1.5) return "#3fae5a";
+  if (m > 1.0) return "#2c6e44";
+  if (m === 1.0) return "#262130";
+  if (m >= 0.6) return "#6e2f3a";
+  return "#b53a48";
+}
+
+/** Page-specific share card: eyebrow + title + subtitle, with one of a row of
+ *  framed icons, a color grid (the matrix), or text chips as the visual. */
+export async function renderPageCard(opts: {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  icons?: ArrayBuffer[];
+  chips?: string[];
+  grid?: string[][];
+}): Promise<ImageResponse> {
+  const fonts = await cinzel();
+  const {
+    eyebrow = "BLOODLUST & HARMONY",
+    title,
+    subtitle,
+    icons = [],
+    chips = [],
+    grid,
+  } = opts;
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: C.night,
+          color: C.ink,
+          fontFamily: "Cinzel",
+          padding: 64,
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 26, color: C.blood, letterSpacing: 6 }}>
+            {eyebrow}
+          </div>
+          <div
+            style={{
+              fontSize: title.length > 16 ? 62 : 78,
+              marginTop: 14,
+              lineHeight: 1.05,
+            }}
+          >
+            {title}
+          </div>
+          {subtitle ? (
+            <div
+              style={{
+                fontSize: 34,
+                color: C.gold,
+                marginTop: 16,
+                maxWidth: 960,
+              }}
+            >
+              {subtitle}
+            </div>
+          ) : null}
+        </div>
+
+        {grid ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {grid.map((row, i) => (
+              <div key={i} style={{ display: "flex", gap: 4 }}>
+                {row.map((c, j) => (
+                  <div
+                    key={j}
+                    style={{
+                      display: "flex",
+                      width: 34,
+                      height: 34,
+                      borderRadius: 5,
+                      background: c,
+                    }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : icons.length > 0 ? (
+          <div style={{ display: "flex", gap: 20 }}>
+            {icons.slice(0, 6).map((buf, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 120,
+                  height: 120,
+                  background: C.panel,
+                  border: `2px solid ${C.rule}`,
+                  borderRadius: 16,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                <img
+                  src={buf as unknown as string}
+                  width={96}
+                  height={96}
+                  style={{ objectFit: "contain", borderRadius: 10 }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : chips.length > 0 ? (
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            {chips.map((chip) => (
+              <div
+                key={chip}
+                style={{
+                  display: "flex",
+                  fontSize: 30,
+                  border: `2px solid ${C.rule}`,
+                  background: C.panel,
+                  borderRadius: 10,
+                  padding: "12px 26px",
+                }}
+              >
+                {chip}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    ),
+    { ...OG_SIZE, fonts },
+  );
+}
