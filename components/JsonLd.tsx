@@ -2,8 +2,11 @@ import { DISCORD_URL, REDDIT_URL, STEAM_URL } from "@/lib/links";
 import { listScreenshots } from "@/lib/screenshots";
 import type { ProsePage } from "@/lib/wiki";
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.bloodlustandharmony.com";
+// Trailing slash stripped so raw-concatenated URLs (sitemap, robots) match the
+// canonical exactly — the Vercel env var carries a trailing slash otherwise.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.bloodlustandharmony.com"
+).replace(/\/+$/, "");
 
 const AUTHOR = { "@type": "Person", name: "TheCyberMouse", url: SITE_URL };
 
