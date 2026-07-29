@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import ModeBody from "@/components/ModeBody";
+import PokerExtras from "@/components/PokerExtras";
 import { GAME_MODES, getMode } from "@/lib/modes";
 
 export const dynamicParams = false;
@@ -68,6 +69,8 @@ export default function ModePage({ params }: { params: { slug: string } }) {
       </dl>
 
       <ModeBody sections={mode.sections} />
+
+      {mode.slug === "poker" ? <PokerExtras /> : null}
 
       <div className="mt-14 border-t border-bh-rule pt-6">
         <Link

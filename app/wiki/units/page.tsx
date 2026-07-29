@@ -1,7 +1,7 @@
 import Link from "next/link";
 import IconImg from "@/components/IconImg";
 import UnitCard, { UnitTreeRows } from "@/components/UnitCard";
-import { raceSlug, unitsByFaction } from "@/lib/wiki";
+import { neutralUnits, raceSlug, unitsByFaction } from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -16,7 +16,10 @@ export async function generateMetadata() {
 }
 
 export default async function UnitsIndex() {
-  const groups = await unitsByFaction();
+  const [groups, neutral] = await Promise.all([
+    unitsByFaction(),
+    neutralUnits(),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
@@ -76,6 +79,23 @@ export default async function UnitsIndex() {
           </section>
         ),
       )}
+
+      {neutral.length > 0 ? (
+        <section>
+          <div className="mt-12 mb-4 flex items-center gap-3">
+            <h2 className="font-display text-2xl">Neutral</h2>
+            <span className="text-sm text-bh-mute">
+              {neutral.length} units fielded outside the factions, in modes like
+              Poker and Sandbox.
+            </span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {neutral.map((u) => (
+              <UnitCard key={u.id} u={u} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -40,6 +40,7 @@ export type WikiMeta = {
   immunityIcons?: Record<string, string>;
   playerColors?: string[];
   richTextTags?: string[];
+  pokerBoonChances?: { rare: number; uncommon: number; common: number };
 };
 
 export function slugOf(key: string): string {
@@ -84,6 +85,7 @@ export const listResearches = () => listTable("researches");
 export const listShopItems = () => listTable("shop_items");
 export const listAbilities = () => listTable("abilities");
 export const listStatuses = () => listTable("statuses");
+export const listPokerBoons = () => listTable("poker_boons");
 
 export async function findBySlug(
   table: string,
@@ -168,6 +170,30 @@ const FACTION_SUMMONS: Record<string, string[]> = {
 const FACTION_IN_WORKS: Record<string, string[]> = {
   DA_Race_Orc: ["DA_OrcWarlock"],
 };
+
+/** Unit DAs deliberately kept off the site: duplicate/placeholder/unused
+ *  content (a mislabeled slime, the spare dwarf defenders, a goblin/ghoul
+ *  test unit, an archer in an Unused folder). Everything else that no faction
+ *  claims falls into the Neutral section. */
+const HIDDEN_UNITS = new Set<string>([
+  "DA_Goblin",
+  "DA_Ghoul",
+  "DA_Slime",
+  "DA_Ironbreaker",
+  "DA_Shieldguard",
+  "DA_Multishot_Archer",
+]);
+
+/** Units no faction fields and that are not curated summons/in-works or hidden:
+ *  the Croupier and any other genuinely neutral or mode-specific unit. */
+export async function neutralUnits(): Promise<WikiRecord[]> {
+  const [units, groups] = await Promise.all([listUnits(), unitsByFaction()]);
+  const assigned = new Set<string>();
+  for (const g of groups) {
+    for (const u of [...g.units, ...g.summons, ...g.inWorks]) assigned.add(u.id);
+  }
+  return units.filter((u) => !assigned.has(u.id) && !HIDDEN_UNITS.has(u.key));
+}
 
 /** Units grouped per faction, derived the same way the game reaches them:
  *  race -> buildings (+ upgrade targets, transitively) -> spawned units,
