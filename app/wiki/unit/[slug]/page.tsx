@@ -5,6 +5,7 @@ import IconImg from "@/components/IconImg";
 import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import TagBadge from "@/components/TagBadge";
 import TypeStat from "@/components/TypeStat";
+import Link from "next/link";
 import { GameText } from "@/lib/richtext";
 import { metaDescription, stripGameText } from "@/lib/seo";
 import { iconUrl } from "@/lib/supabase";
@@ -15,8 +16,10 @@ import {
   getWikiMeta,
   listAbilities,
   listUnits,
+  raceSlug,
   slugOf,
   tagLeaf,
+  unitContext,
   STAT_LABELS,
   STAT_ORDER,
   type WikiRecord,
@@ -64,7 +67,11 @@ export default async function UnitPage({
   const u = await findBySlug("units", params.slug);
   if (!u) notFound();
 
-  const [abilities, meta] = await Promise.all([listAbilities(), getWikiMeta()]);
+  const [abilities, meta, context] = await Promise.all([
+    listAbilities(),
+    getWikiMeta(),
+    unitContext(u.id),
+  ]);
   const abilityByKey = new Map(abilities.map((a) => [a.key, a]));
 
   const stats = (u.stats as Record<string, number>) || {};
@@ -147,6 +154,39 @@ export default async function UnitPage({
           </div>
         </div>
       </div>
+
+      {context.faction || context.trainedBy.length > 0 ? (
+        <p className="mt-4 text-sm text-bh-mute">
+          {context.faction ? (
+            <>
+              Fielded by{" "}
+              <Link
+                href={`/wiki/faction/${raceSlug(context.faction)}`}
+                className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+              >
+                {context.faction.displayName || context.faction.key}
+              </Link>
+            </>
+          ) : null}
+          {context.faction && context.trainedBy.length > 0 ? " · " : ""}
+          {context.trainedBy.length > 0 ? (
+            <>
+              Trained at{" "}
+              {context.trainedBy.map((b, i) => (
+                <span key={b.id}>
+                  {i > 0 ? ", " : ""}
+                  <Link
+                    href={`/wiki/building/${slugOf(b.key)}`}
+                    className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+                  >
+                    {b.displayName || b.key}
+                  </Link>
+                </span>
+              ))}
+            </>
+          ) : null}
+        </p>
+      ) : null}
 
       {tooltip?.body ? (
         <p className="mt-6 max-w-prose leading-relaxed">

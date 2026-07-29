@@ -14,6 +14,7 @@ import {
   listResearches,
   listShopItems,
   listUnits,
+  loreSlugs,
   raceSlug,
   slugOf,
   unitsByFaction,
@@ -97,15 +98,17 @@ export default async function FactionPage({
   const race = await findRaceBySlug(params.slug);
   if (!race) notFound();
 
-  const [buildings, units, researches, shopItems, unitGroups] =
+  const [buildings, units, researches, shopItems, unitGroups, lore] =
     await Promise.all([
       listBuildings(),
       listUnits(),
       listResearches(),
       listShopItems(),
       unitsByFaction(),
+      loreSlugs(),
     ]);
   const unitGroup = unitGroups.find((g) => g.race.id === race.id);
+  const hasLore = lore.has(raceSlug(race));
   const buildingMap = byId(buildings);
   const unitMap = byId(units);
   const researchMap = byId(researches);
@@ -146,6 +149,16 @@ export default async function FactionPage({
         <div>
           <h1 className="font-display text-4xl">{race.displayName || race.key}</h1>
           <p className="mt-1 text-bh-mute max-w-prose">{race.description}</p>
+          {hasLore ? (
+            <p className="mt-2 text-sm">
+              <Link
+                href={`/lore/${raceSlug(race)}`}
+                className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+              >
+                Read the lore of {race.displayName || race.key} →
+              </Link>
+            </p>
+          ) : null}
         </div>
       </div>
 

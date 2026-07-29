@@ -323,6 +323,55 @@ export async function buildingsByFaction(): Promise<
 }
 
 // ---------------------------------------------------------------------------
+// Reverse lookups for cross-linking detail pages back to their context.
+// ---------------------------------------------------------------------------
+
+/** For a unit: the faction that fields it and the buildings that train it. */
+export async function unitContext(unitId: string): Promise<{
+  faction: WikiRecord | null;
+  trainedBy: WikiRecord[];
+}> {
+  const [groups, buildings] = await Promise.all([
+    unitsByFaction(),
+    listBuildings(),
+  ]);
+  let faction: WikiRecord | null = null;
+  for (const g of groups) {
+    if (
+      [...g.units, ...g.summons, ...g.inWorks].some((u) => u.id === unitId)
+    ) {
+      faction = g.race;
+      break;
+    }
+  }
+  const trainedBy = buildings.filter((b) => b.spawnedUnit === unitId);
+  return { faction, trainedBy };
+}
+
+/** The faction whose building trees include this building. */
+export async function buildingFaction(
+  buildingId: string,
+): Promise<WikiRecord | null> {
+  const groups = await buildingsByFaction();
+  for (const g of groups) {
+    const all = [
+      ...g.mainTrees.flat(),
+      ...g.specialTrees.flat(),
+      ...g.castleTree,
+    ];
+    if (all.some((b) => b.id === buildingId)) return g.race;
+  }
+  return null;
+}
+
+/** Slugs of published lore pages, so a faction only links its lore when one
+ *  actually exists. */
+export async function loreSlugs(): Promise<Set<string>> {
+  const pages = await listProsePages("lore");
+  return new Set(pages.map((p) => p.slug));
+}
+
+// ---------------------------------------------------------------------------
 // Prose pages (wiki_pages): hand-written lore / guides / devlog, edited via
 // the MCP or /admin. Published rows only — drafts never render.
 // ---------------------------------------------------------------------------

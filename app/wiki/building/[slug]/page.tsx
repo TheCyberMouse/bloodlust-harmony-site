@@ -7,10 +7,12 @@ import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
 import { GameText } from "@/lib/richtext";
 import { metaDescription, stripGameText } from "@/lib/seo";
 import {
+  buildingFaction,
   findBySlug,
   listBuildings,
   listUnits,
   listUpgrades,
+  raceSlug,
   slugOf,
   tagLeaf,
   STAT_LABELS,
@@ -58,10 +60,11 @@ export default async function BuildingPage({
   const b = await findBySlug("buildings", params.slug);
   if (!b) notFound();
 
-  const [units, upgrades, buildings] = await Promise.all([
+  const [units, upgrades, buildings, faction] = await Promise.all([
     listUnits(),
     listUpgrades(),
     listBuildings(),
+    buildingFaction(b.id),
   ]);
   const unitMap = new Map(units.map((u) => [u.id, u]));
   const upgradeMap = new Map(upgrades.map((u) => [u.id, u]));
@@ -108,6 +111,18 @@ export default async function BuildingPage({
           </p>
         </div>
       </div>
+
+      {faction ? (
+        <p className="mt-4 text-sm text-bh-mute">
+          Part of{" "}
+          <Link
+            href={`/wiki/faction/${raceSlug(faction)}`}
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            {faction.displayName || faction.key}
+          </Link>
+        </p>
+      ) : null}
 
       {tooltip?.body ? (
         <p className="mt-6 max-w-prose leading-relaxed">
