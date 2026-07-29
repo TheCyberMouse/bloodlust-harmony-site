@@ -75,9 +75,19 @@ export default async function PokerExtras() {
     return false;
   };
 
+  // Boons first (gold), then curses (red), each alphabetical by name.
+  const sortedBoons = [...boons].sort((a, b) => {
+    const ca = isCurse(a) ? 1 : 0;
+    const cb = isCurse(b) ? 1 : 0;
+    if (ca !== cb) return ca - cb;
+    return (a.displayName as string || a.key).localeCompare(
+      (b.displayName as string) || b.key,
+    );
+  });
+
   return (
-    <div className="mt-12 max-w-prose space-y-10">
-      <section>
+    <div className="mt-12 space-y-10">
+      <section className="max-w-prose">
         <h2 className="font-display text-2xl text-bh-ink mb-4">The Croupier</h2>
         <p className="text-bh-mute leading-relaxed mb-4">
           Every Poker match is run by the Croupier, the dealer at the heart of
@@ -113,7 +123,7 @@ export default async function PokerExtras() {
         ) : null}
       </section>
 
-      <section>
+      <section className="max-w-prose">
         <h2 className="font-display text-2xl text-bh-ink mb-4">
           Battlefield boons and curses
         </h2>
@@ -146,64 +156,64 @@ export default async function PokerExtras() {
             </tbody>
           </table>
         </div>
-
-        {boons.length > 0 ? (
-          <>
-            <h3 className="font-display text-lg text-bh-gold mt-8 mb-3">
-              The pool ({boons.length})
-            </h3>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {boons.map((b) => {
-                const chip = effectChip(b);
-                const faction = (b.filterRace as string) || "";
-                return (
-                  <div
-                    key={b.id}
-                    className="rounded-lg border border-bh-rule bg-bh-panel p-4"
-                  >
-                    <div className="flex items-baseline justify-between gap-2">
-                      <div className="font-medium">
-                        {b.displayName || b.key}
-                      </div>
-                      <span
-                        className={`text-xs ${
-                          isCurse(b) ? "text-bh-blood" : "text-bh-gold"
-                        }`}
-                      >
-                        {isCurse(b) ? "curse" : "boon"}
-                      </span>
-                    </div>
-                    <p className="text-sm text-bh-mute mt-1">
-                      <GameText text={b.description as string} />
-                    </p>
-                    <div className="mt-2 flex flex-wrap gap-1.5 text-xs text-bh-mute">
-                      {chip ? (
-                        <span className="rounded border border-bh-rule px-1.5 py-0.5">
-                          {chip}
-                        </span>
-                      ) : null}
-                      {faction ? (
-                        <span className="rounded border border-bh-rule px-1.5 py-0.5">
-                          {faction} only
-                        </span>
-                      ) : (
-                        <span className="rounded border border-bh-rule px-1.5 py-0.5">
-                          all units
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          <p className="mt-6 text-sm text-bh-mute">
-            The full boon and curse catalog syncs from the game data. Check back
-            after the next content update.
-          </p>
-        )}
       </section>
+
+      {sortedBoons.length > 0 ? (
+        <section>
+          <h2 className="font-display text-2xl text-bh-ink mb-1">
+            The full pool
+          </h2>
+          <p className="text-sm text-bh-mute mb-4">
+            All {sortedBoons.length} modifiers the roll can land on.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-bh-mute">
+                  <th className="py-2 pr-4 font-normal">Modifier</th>
+                  <th className="py-2 pr-4 font-normal">Type</th>
+                  <th className="py-2 pr-4 font-normal">Effect</th>
+                  <th className="py-2 pr-4 font-normal">Applies to</th>
+                  <th className="py-2 font-normal">What it does</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedBoons.map((b) => {
+                  const chip = effectChip(b);
+                  const faction = (b.filterRace as string) || "";
+                  const curse = isCurse(b);
+                  return (
+                    <tr key={b.id} className="border-t border-bh-rule align-top">
+                      <td className="py-2 pr-4 font-medium text-bh-ink whitespace-nowrap">
+                        {b.displayName || b.key}
+                      </td>
+                      <td className="py-2 pr-4">
+                        <span className={curse ? "text-bh-blood" : "text-bh-gold"}>
+                          {curse ? "Curse" : "Boon"}
+                        </span>
+                      </td>
+                      <td className="py-2 pr-4 text-bh-mute whitespace-nowrap">
+                        {chip || "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-bh-mute whitespace-nowrap">
+                        {faction || "All units"}
+                      </td>
+                      <td className="py-2 text-bh-mute">
+                        <GameText text={b.description as string} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : (
+        <p className="max-w-prose text-sm text-bh-mute">
+          The full boon and curse catalog syncs from the game data. Check back
+          after the next content update.
+        </p>
+      )}
     </div>
   );
 }
