@@ -84,12 +84,33 @@ export default async function UnitPage({
   const poolKeys = (u.randomAbilityPool as string[]) || [];
   const auras =
     (u.auras as Array<{ key: string; tooltip?: WikiRecord["tooltip"] }>) || [];
-  const passives =
+  const allPassives =
     (u.displayPassives as Array<{
       displayName?: string;
       icon?: string;
       tooltip?: WikiRecord["tooltip"];
     }>) || [];
+
+  // A DisplayPassive that restates an ability the unit already has would render
+  // twice ("Fire Resistance" under Abilities, "Fire Resist" under Traits).
+  // These duplicates exist because a resistance passive used to show no icon,
+  // so a matching DisplayPassive was authored to supply one - the in-game
+  // command card resolves that icon itself, and so does this page now.
+  //
+  // Matched on the description rather than the name: the duplicate is a
+  // copy-paste of the ability's text, while the names deliberately differ
+  // ("Fire Resistance" vs "Fire Resist"). Fails open - an edited description
+  // simply shows both again rather than hiding the wrong thing.
+  const norm = (s?: string) =>
+    (s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+  const grantedBodies = new Set(
+    grantedKeys
+      .map((k) => norm(abilityByKey.get(k)?.tooltip?.body))
+      .filter(Boolean),
+  );
+  const passives = allPassives.filter(
+    (p) => !(p.tooltip?.body && grantedBodies.has(norm(p.tooltip.body))),
+  );
 
   const AbilityRow = ({
     a,
@@ -99,7 +120,19 @@ export default async function UnitPage({
     note?: string;
   }) => (
     <div className="flex items-start gap-3 rounded-lg border border-bh-rule bg-bh-panel p-4">
-      <IconImg file={a.tooltip?.icon} size={40} alt="" />
+      {/* Resistance passives are C++ classes with no editable CDO, so they
+          carry no tooltip icon; their art is keyed by resist tag in meta.
+          Same fallback the in-game command card uses. */}
+      <IconImg
+        file={
+          a.tooltip?.icon ||
+          (a.resistTag
+            ? meta.resistIcons?.[a.resistTag as string]
+            : undefined)
+        }
+        size={40}
+        alt=""
+      />
       <div>
         <div className="font-medium">
           {a.displayName || a.key}
@@ -133,15 +166,10 @@ export default async function UnitPage({
               {tagLeaf(u.unitClass as string)}
             </p>
           ) : null}
+          {/* Damage element moved into the Stats card beside attack/armor type
+              - it describes the unit's damage, so it belongs with the other
+              combat types rather than as a small badge up here. */}
           <div className="mt-2 flex flex-wrap gap-2">
-            {u.damageElement ? (
-              <TagBadge
-                tag={u.damageElement as string}
-                prefix="Element:"
-                iconMap={meta.damageElementIcons}
-                tone="text-bh-blood"
-              />
-            ) : null}
             {((u.immuneElements as string[]) || []).map((t) => (
               <TagBadge
                 key={t}
@@ -227,13 +255,33 @@ export default async function UnitPage({
           {Object.keys(stats).length > 0 || u.attackType || u.armorType ? (
         <div className="w-full max-w-md rounded-lg border border-bh-rule bg-bh-panel p-5">
           <h2 className="font-display text-lg mb-3">Stats</h2>
-          {u.attackType || u.armorType ? (
+          {u.attackType || u.armorType || u.damageElement ? (
             <div className="mb-4 grid grid-cols-2 gap-4 border-b border-bh-rule pb-4">
               {u.attackType ? (
                 <TypeStat kind="attack" tag={u.attackType as string} meta={meta} />
               ) : null}
               {u.armorType ? (
                 <TypeStat kind="armor" tag={u.armorType as string} meta={meta} />
+              ) : null}
+              {/* Element sits with attack/armor type, at the same weight: the
+                  unit's ordinary attacks carry it, so it is a combat type, not
+                  a badge. Lands directly under Attack type in the 2-col grid. */}
+              {u.damageElement ? (
+                <div className="flex items-center gap-3">
+                  <IconImg
+                    file={meta.damageElementIcons?.[u.damageElement as string]}
+                    size={48}
+                    alt=""
+                  />
+                  <span>
+                    <span className="block text-xs text-bh-mute">
+                      Damage element
+                    </span>
+                    <span className="block text-lg font-medium text-bh-blood">
+                      {tagLeaf(u.damageElement as string)}
+                    </span>
+                  </span>
+                </div>
               ) : null}
             </div>
           ) : null}
