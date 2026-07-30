@@ -6,7 +6,6 @@ import {
   findBySlug,
   getWikiMeta,
   listPokerBoons,
-  listUnits,
   slugOf,
   tagLeaf,
   type WikiRecord,
@@ -45,25 +44,11 @@ function pct(n: number): string {
 }
 
 export default async function PokerExtras() {
-  const [croupier, boons, meta, units] = await Promise.all([
+  const [croupier, boons, meta] = await Promise.all([
     findBySlug("units", "thecroupier"),
     listPokerBoons(),
     getWikiMeta(),
-    listUnits(),
   ]);
-
-  // Units flagged as poker cards, with the count one dealt card yields.
-  const deck = units
-    .filter((u) => u.pokerCard)
-    .sort((a, b) =>
-      (a.displayName as string || a.key).localeCompare(
-        (b.displayName as string) || b.key,
-      ),
-    );
-  const rangeText = (u: WikiRecord) =>
-    (u.pokerMinCount as number) === (u.pokerMaxCount as number)
-      ? `${u.pokerMinCount}`
-      : `${u.pokerMinCount} to ${u.pokerMaxCount}`;
 
   const chances = meta.pokerBoonChances ?? {
     rare: 0.15,
@@ -138,59 +123,22 @@ export default async function PokerExtras() {
         ) : null}
       </section>
 
-      {deck.length > 0 ? (
-        <section>
-          <h2 className="font-display text-2xl text-bh-ink mb-1">The deck</h2>
-          <p className="text-sm text-bh-mute mb-4 max-w-prose">
-            Each card you are dealt is one of these units, in a random count
-            from its range. Bigger ranges mean a swingier draw.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-bh-mute">
-                  <th className="py-2 pr-4 font-normal">Card</th>
-                  <th className="py-2 pr-4 font-normal">Class</th>
-                  <th className="py-2 pr-4 font-normal">Per card</th>
-                  <th className="py-2 pr-4 font-normal">HP</th>
-                  <th className="py-2 font-normal">DPS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deck.map((u) => {
-                  const stats = (u.stats as Record<string, number>) || {};
-                  const dps = dpsOf(stats);
-                  return (
-                    <tr key={u.id} className="border-t border-bh-rule align-top">
-                      <td className="py-2 pr-4">
-                        <Link
-                          href={`/wiki/unit/${slugOf(u.key)}`}
-                          className="group flex items-center gap-2 font-medium text-bh-ink hover:text-bh-blood transition-colors"
-                        >
-                          <IconImg file={u.icon} size={28} alt="" />
-                          {u.displayName || u.key}
-                        </Link>
-                      </td>
-                      <td className="py-2 pr-4 text-bh-mute whitespace-nowrap">
-                        {u.unitClass ? tagLeaf(u.unitClass as string) : "—"}
-                      </td>
-                      <td className="py-2 pr-4 text-bh-ink whitespace-nowrap">
-                        {rangeText(u)}
-                      </td>
-                      <td className="py-2 pr-4 text-bh-mute whitespace-nowrap">
-                        {stats.MaxHealth ?? "—"}
-                      </td>
-                      <td className="py-2 text-bh-mute whitespace-nowrap">
-                        {dps ?? "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
+      <section className="max-w-prose">
+        <h2 className="font-display text-2xl text-bh-ink mb-4">The deck</h2>
+        <p className="text-bh-mute leading-relaxed">
+          Each hand deals you one or two cards. Every card is a single unit
+          type in a random count drawn from that unit&apos;s own range: a
+          Spearman card might be one to twelve bodies, a Red Dragon just one to
+          three. Wider ranges mean a swingier draw, so reading the deck is half
+          of reading your odds.
+        </p>
+        <Link
+          href="/wiki/poker-deck"
+          className="mt-5 inline-block rounded bg-bh-blood px-6 py-3 font-medium text-white hover:bg-bh-bloodInk transition-colors"
+        >
+          View the full deck →
+        </Link>
+      </section>
 
       <section className="max-w-prose">
         <h2 className="font-display text-2xl text-bh-ink mb-4">

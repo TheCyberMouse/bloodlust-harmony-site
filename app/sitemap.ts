@@ -67,6 +67,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })),
     {
+      url: `${SITE_URL}/wiki/poker-deck`,
+      lastModified: dataMod,
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
       url: `${SITE_URL}/wiki/factions`,
       lastModified: dataMod,
       changeFrequency: "weekly",
