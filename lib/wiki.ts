@@ -38,6 +38,10 @@ export type WikiMeta = {
   armorTypeIcons?: Record<string, string>;
   damageElementIcons?: Record<string, string>;
   immunityIcons?: Record<string, string>;
+  /** Keyed by the full Unit.Resist.Element.<Element>.<Tier> tag. The resistance
+   *  passives are pure C++ classes with no editable CDO, so their icon lives in
+   *  DevSettings rather than on the ability itself. */
+  resistIcons?: Record<string, string>;
   playerColors?: string[];
   richTextTags?: string[];
   pokerBoonChances?: { rare: number; uncommon: number; common: number };

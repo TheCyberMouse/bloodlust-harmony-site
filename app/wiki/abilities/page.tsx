@@ -1,9 +1,11 @@
 import Link from "next/link";
+import ElementalDefences from "@/components/ElementalDefences";
 import HoverCard from "@/components/HoverCard";
 import IconImg from "@/components/IconImg";
 import { GameText } from "@/lib/richtext";
 import {
   dpsOf,
+  getWikiMeta,
   listAbilities,
   listBuildings,
   listUnits,
@@ -144,10 +146,11 @@ function AbilityCard({
 }
 
 export default async function AbilitiesIndex() {
-  const [abilities, units, buildings] = await Promise.all([
+  const [abilities, units, buildings, meta] = await Promise.all([
     listAbilities(),
     listUnits(),
     listBuildings(),
+    getWikiMeta(),
   ]);
 
   const unitByName = new Map(
@@ -170,12 +173,17 @@ export default async function AbilitiesIndex() {
   // Only abilities with a real display name are player-facing; internal
   // scaffolding classes (the shared BasicAttack, abstract bases) keep their
   // class name and are skipped. Alphabetical by display name.
+  // The 21 elemental resistance passives are pulled OUT of the A-Z list: as
+  // individual cards they are 21 near-identical entries that drown the rest of
+  // the page, and the Elemental defences table below shows all of them at once
+  // alongside the immunities they pair with.
   const shown = abilities
     .filter(
       (a) =>
         a.displayName &&
         a.displayName !== a.key &&
-        !a.key.includes("BasicAttack"),
+        !a.key.includes("BasicAttack") &&
+        !a.resistElement,
     )
     .sort((a, b) => (a.displayName || "").localeCompare(b.displayName || ""));
 
@@ -215,6 +223,8 @@ export default async function AbilitiesIndex() {
         Every ability in the game, A to Z: {shown.length} spells, passives, and
         autocasts.
       </p>
+
+      <ElementalDefences abilities={abilities} units={units} meta={meta} />
 
       <h2 className="font-display text-2xl mt-10 mb-1">In use</h2>
       <p className="mb-4 text-sm text-bh-mute">
