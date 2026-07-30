@@ -188,6 +188,25 @@ export default async function UnitPage({
         </p>
       ) : null}
 
+      {u.pokerCard ? (
+        <p className="mt-2 text-sm text-bh-mute">
+          In{" "}
+          <Link
+            href="/wiki/modes/poker"
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            Poker
+          </Link>
+          , one dealt card is{" "}
+          <span className="text-bh-ink">
+            {(u.pokerMinCount as number) === (u.pokerMaxCount as number)
+              ? `${u.pokerMinCount}`
+              : `${u.pokerMinCount} to ${u.pokerMaxCount}`}
+          </span>{" "}
+          of this unit.
+        </p>
+      ) : null}
+
       {tooltip?.body ? (
         <p className="mt-6 max-w-prose leading-relaxed">
           <GameText text={tooltip.body} />
