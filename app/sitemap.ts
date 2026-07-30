@@ -12,7 +12,7 @@ import {
 } from "@/lib/wiki";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [races, units, buildings, lore, guides, devlog, stamp] =
+  const [races, units, buildings, lore, guides, devlog, patchNotes, stamp] =
     await Promise.all([
       listRaces(),
       listUnits(),
@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       listProsePages("lore"),
       listProsePages("guide"),
       listProsePages("devlog"),
+      listProsePages("patch-notes"),
       getBuildStamp(),
     ]);
 
@@ -151,11 +152,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ["lore", lore],
     ["guides", guides],
     ["devlog", devlog],
+    ["patch-notes", patchNotes],
   ] as const) {
     entries.push({
       url: `${SITE_URL}/${base}`,
       lastModified: now,
-      changeFrequency: base === "devlog" ? "weekly" : "monthly",
+      changeFrequency:
+        base === "devlog" || base === "patch-notes" ? "weekly" : "monthly",
       priority: 0.6,
     });
     for (const p of pages) {

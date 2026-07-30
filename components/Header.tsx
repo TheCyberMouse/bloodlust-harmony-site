@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/how-to-play", label: "How to Play" },
   { href: "/wiki", label: "Wiki" },
   { href: "/devlog", label: "Devlog" },
+  { href: "/patch-notes", label: "Patch Notes" },
 ];
 
 export default function Header() {
