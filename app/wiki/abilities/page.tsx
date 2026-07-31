@@ -1,16 +1,14 @@
-import Link from "next/link";
 import ElementalDefences from "@/components/ElementalDefences";
-import HoverCard from "@/components/HoverCard";
 import IconImg from "@/components/IconImg";
+import UnitChip from "@/components/UnitChip";
 import { GameText } from "@/lib/richtext";
 import {
-  dpsOf,
   getWikiMeta,
   listAbilities,
   listBuildings,
   listUnits,
   slugOf,
-  tagLeaf,
+  type WikiMeta,
   type WikiRecord,
 } from "@/lib/wiki";
 
@@ -54,44 +52,18 @@ function resolveUser(
   };
 }
 
-function UserPanel({ user }: { user: ResolvedUser }) {
-  const stats = (user.rec.stats as Record<string, number>) || {};
-  const dps = dpsOf(stats);
-  const subtitle = user.isBuilding
-    ? [
-        "Building",
-        stats.MaxHealth ? `${stats.MaxHealth} HP` : null,
-        (user.rec.costGold as number) ? `${user.rec.costGold}g` : null,
-      ]
-    : [
-        user.rec.unitClass ? tagLeaf(user.rec.unitClass as string) : null,
-        stats.MaxHealth ? `${stats.MaxHealth} HP` : null,
-        dps !== null ? `${dps} DPS` : null,
-        user.fromPool ? "random roll" : null,
-      ];
-  return (
-    <span className="flex items-center gap-2.5">
-      <IconImg file={user.rec.icon} size={36} alt="" />
-      <span className="block text-left">
-        <span className="block text-sm font-medium text-bh-ink">
-          {user.label}
-        </span>
-        <span className="block text-xs text-bh-mute">
-          {subtitle.filter(Boolean).join(" · ")}
-        </span>
-      </span>
-    </span>
-  );
-}
-
 function AbilityCard({
   a,
   users,
   unresolved,
+  meta,
 }: {
   a: WikiRecord;
   users: ResolvedUser[];
   unresolved: string[];
+  /** Passed through to the carrier chips so their tooltips can show the
+   *  unit's damage element and immunities, not just class/HP/DPS. */
+  meta: WikiMeta;
 }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border border-bh-rule bg-bh-panel p-4">
@@ -123,15 +95,14 @@ function AbilityCard({
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
             <span className="text-xs text-bh-mute/70">Used by:</span>
             {users.map((user) => (
-              <HoverCard key={user.rec.id} panel={<UserPanel user={user} />}>
-                <Link
-                  href={user.href}
-                  aria-label={user.label}
-                  className="block hover:opacity-75 transition-opacity"
-                >
-                  <IconImg file={user.rec.icon} size={30} alt={user.label} />
-                </Link>
-              </HoverCard>
+              <UnitChip
+                key={user.rec.id as string}
+                unit={user.rec}
+                size={30}
+                meta={meta}
+                isBuilding={user.isBuilding}
+                note={user.fromPool ? "random roll" : undefined}
+              />
             ))}
             {unresolved.map((name) => (
               <span key={name} className="text-xs text-bh-mute/70">
@@ -231,7 +202,13 @@ export default async function AbilitiesIndex() {
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {inUse.map(({ a, users, unresolved }) => (
-          <AbilityCard key={a.id} a={a} users={users} unresolved={unresolved} />
+          <AbilityCard
+            key={a.id}
+            a={a}
+            users={users}
+            unresolved={unresolved}
+            meta={meta}
+          />
         ))}
       </div>
 
@@ -259,6 +236,7 @@ export default async function AbilitiesIndex() {
                 a={a}
                 users={users}
                 unresolved={unresolved}
+                meta={meta}
               />
             ))}
           </div>

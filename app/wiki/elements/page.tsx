@@ -2,12 +2,13 @@ import Link from "next/link";
 import ElementalDefences from "@/components/ElementalDefences";
 import IconImg from "@/components/IconImg";
 import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
+import UnitChip from "@/components/UnitChip";
 import {
   getWikiMeta,
   listAbilities,
   listUnits,
-  slugOf,
   tagLeaf,
+  type WikiRecord,
 } from "@/lib/wiki";
 
 export const revalidate = 3600;
@@ -28,20 +29,13 @@ export default async function ElementsPage() {
 
   // Which units actually deal each element, straight from UnitDefinition
   // .DamageElement — this is the offensive half the defences table implies.
-  const dealersByElement = new Map<
-    string,
-    { label: string; href: string; icon?: string }[]
-  >();
+  const dealersByElement = new Map<string, WikiRecord[]>();
   for (const u of units) {
     const el = u.damageElement as string | undefined;
     if (!el) continue;
     if (u.unassigned) continue; // not reachable in a match
     const list = dealersByElement.get(el) || [];
-    list.push({
-      label: u.displayName || u.key,
-      href: `/wiki/unit/${slugOf(u.key)}`,
-      icon: u.icon as string | undefined,
-    });
+    list.push(u);
     dealersByElement.set(el, list);
   }
   const dealerElements = [...dealersByElement.keys()].sort((a, b) =>
@@ -155,15 +149,12 @@ export default async function ElementsPage() {
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {dealersByElement.get(el)!.map((d) => (
-                    <Link
-                      key={d.href}
-                      href={d.href}
-                      aria-label={d.label}
-                      title={d.label}
-                      className="block hover:opacity-75 transition-opacity"
-                    >
-                      <IconImg file={d.icon} size={30} alt={d.label} />
-                    </Link>
+                    <UnitChip
+                      key={d.id as string}
+                      unit={d}
+                      size={30}
+                      meta={meta}
+                    />
                   ))}
                 </div>
               </div>

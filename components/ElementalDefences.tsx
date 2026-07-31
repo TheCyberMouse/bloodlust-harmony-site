@@ -1,7 +1,7 @@
 import Link from "next/link";
-import HoverCard from "@/components/HoverCard";
 import IconImg from "@/components/IconImg";
-import { slugOf, tagLeaf, type WikiMeta, type WikiRecord } from "@/lib/wiki";
+import UnitChip from "@/components/UnitChip";
+import { tagLeaf, type WikiMeta, type WikiRecord } from "@/lib/wiki";
 
 /**
  * One table covering every elemental defence in the game, ordered worst-case to
@@ -26,34 +26,18 @@ const TIERS = [
   { key: "Greater", label: "Greater" },
 ] as const;
 
-type Carrier = { label: string; href: string; icon?: string };
+/** Carriers are full unit records, not stripped label/href pairs, so the hover
+ *  tooltip can show real stats instead of just repeating the name. */
+type Carrier = WikiRecord;
 
-function Carriers({ carriers }: { carriers: Carrier[] }) {
+function Carriers({ carriers, meta }: { carriers: Carrier[]; meta: WikiMeta }) {
   if (carriers.length === 0) {
     return <span className="text-xs text-bh-mute/50">—</span>;
   }
   return (
     <span className="flex flex-wrap gap-1">
       {carriers.map((c) => (
-        <HoverCard
-          key={c.href + c.label}
-          panel={
-            <span className="flex items-center gap-2.5">
-              <IconImg file={c.icon} size={36} alt="" />
-              <span className="block text-sm font-medium text-bh-ink">
-                {c.label}
-              </span>
-            </span>
-          }
-        >
-          <Link
-            href={c.href}
-            aria-label={c.label}
-            className="block hover:opacity-75 transition-opacity"
-          >
-            <IconImg file={c.icon} size={26} alt={c.label} />
-          </Link>
-        </HoverCard>
+        <UnitChip key={c.id as string} unit={c} meta={meta} />
       ))}
     </span>
   );
@@ -65,12 +49,14 @@ function Cell({
   tone,
   sub,
   carriers,
+  meta,
 }: {
   icon?: string;
   title: string;
   tone?: string;
   sub: string;
   carriers: Carrier[];
+  meta: WikiMeta;
 }) {
   return (
     <td className="align-top px-3 py-3 border-t border-bh-rule">
@@ -84,7 +70,7 @@ function Cell({
         </span>
       </span>
       <span className="mt-2 block">
-        <Carriers carriers={carriers} />
+        <Carriers carriers={carriers} meta={meta} />
       </span>
     </td>
   );
@@ -118,19 +104,12 @@ export default function ElementalDefences({
   const unitByName = new Map(
     units.map((u) => [u.displayName || u.key, u] as const),
   );
-  const carrierOf = (name: string): Carrier | null => {
-    // Buildings can carry these too, but they arrive suffixed; the elemental
-    // defences are unit-side in practice, so resolve units and skip the rest.
-    const rec = unitByName.get(name);
-    if (!rec) return null;
-    return {
-      label: rec.displayName || rec.key,
-      href: `/wiki/unit/${slugOf(rec.key)}`,
-      icon: rec.icon as string | undefined,
-    };
-  };
+  // Buildings can carry these too, but they arrive suffixed; the elemental
+  // defences are unit-side in practice, so resolve units and skip the rest.
   const carriersFor = (a: WikiRecord): Carrier[] =>
-    ((a.grantedBy as string[]) || []).map(carrierOf).filter(Boolean) as Carrier[];
+    ((a.grantedBy as string[]) || [])
+      .map((name) => unitByName.get(name))
+      .filter(Boolean) as Carrier[];
 
   const resists = abilities.filter((a) => a.resistElement);
   const weaknesses = abilities.filter((a) => a.weaknessElement);
@@ -155,11 +134,7 @@ export default function ElementalDefences({
     for (const tag of (u.immuneElements as string[]) || []) {
       const el = tag.replace("Unit.Immune.", "Damage.Element.");
       const list = immuneByElement.get(el) || [];
-      list.push({
-        label: u.displayName || u.key,
-        href: `/wiki/unit/${slugOf(u.key)}`,
-        icon: u.icon as string | undefined,
-      });
+      list.push(u);
       immuneByElement.set(el, list);
     }
   }
@@ -221,6 +196,7 @@ export default function ElementalDefences({
                       tone="text-bh-blood"
                       sub={(weak.displayName as string) || ""}
                       carriers={carriersFor(weak)}
+                      meta={meta}
                     />
                   ) : (
                     <Empty />
@@ -238,6 +214,7 @@ export default function ElementalDefences({
                         title={`−${ability.resistPercent}%`}
                         sub={(ability.displayName as string) || ""}
                         carriers={carriersFor(ability)}
+                        meta={meta}
                       />
                     );
                   })}
@@ -249,6 +226,7 @@ export default function ElementalDefences({
                       tone="text-bh-gold"
                       sub="takes no damage"
                       carriers={immuneByElement.get(el) || []}
+                      meta={meta}
                     />
                   ) : (
                     <td className="align-top px-3 py-3 border-t border-bh-rule text-xs text-bh-mute/60">
