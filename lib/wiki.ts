@@ -42,6 +42,9 @@ export type WikiMeta = {
    *  passives are pure C++ classes with no editable CDO, so their icon lives in
    *  DevSettings rather than on the ability itself. */
   resistIcons?: Record<string, string>;
+  /** Keyed by the Unit.Weak.Element.<Element> tag. Same story as resistIcons:
+   *  C++ classes with no editable CDO, so DevSettings owns the art. */
+  weaknessIcons?: Record<string, string>;
   playerColors?: string[];
   richTextTags?: string[];
   pokerBoonChances?: { rare: number; uncommon: number; common: number };

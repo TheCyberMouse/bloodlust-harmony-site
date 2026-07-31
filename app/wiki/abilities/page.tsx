@@ -173,8 +173,8 @@ export default async function AbilitiesIndex() {
   // Only abilities with a real display name are player-facing; internal
   // scaffolding classes (the shared BasicAttack, abstract bases) keep their
   // class name and are skipped. Alphabetical by display name.
-  // The 21 elemental resistance passives are pulled OUT of the A-Z list: as
-  // individual cards they are 21 near-identical entries that drown the rest of
+  // The 21 resistance + 7 weakness passives are pulled OUT of the A-Z list: as
+  // individual cards they are 28 near-identical entries that drown the rest of
   // the page, and the Elemental defences table below shows all of them at once
   // alongside the immunities they pair with.
   const shown = abilities
@@ -183,7 +183,8 @@ export default async function AbilitiesIndex() {
         a.displayName &&
         a.displayName !== a.key &&
         !a.key.includes("BasicAttack") &&
-        !a.resistElement,
+        !a.resistElement &&
+        !a.weaknessElement,
     )
     .sort((a, b) => (a.displayName || "").localeCompare(b.displayName || ""));
 
@@ -224,8 +225,6 @@ export default async function AbilitiesIndex() {
         autocasts.
       </p>
 
-      <ElementalDefences abilities={abilities} units={units} meta={meta} />
-
       <h2 className="font-display text-2xl mt-10 mb-1">In use</h2>
       <p className="mb-4 text-sm text-bh-mute">
         {inUse.length} abilities carried by a unit or building right now.
@@ -235,6 +234,16 @@ export default async function AbilitiesIndex() {
           <AbilityCard key={a.id} a={a} users={users} unresolved={unresolved} />
         ))}
       </div>
+
+      {/* Below the A-Z list, not above it: the 21 resistance + 7 weakness
+          passives are pulled out of that list (see the `shown` filter) and
+          collapsed into this one table, so it reads as a reference appendix. */}
+      <ElementalDefences
+        abilities={abilities}
+        units={units}
+        meta={meta}
+        moreHref="/wiki/elements"
+      />
 
       {unused.length > 0 ? (
         <>

@@ -1,5 +1,12 @@
+import ElementalDefences from "@/components/ElementalDefences";
 import IconImg from "@/components/IconImg";
-import { getWikiMeta, matrixTone, tagLeaf } from "@/lib/wiki";
+import {
+  getWikiMeta,
+  listAbilities,
+  listUnits,
+  matrixTone,
+  tagLeaf,
+} from "@/lib/wiki";
 
 export const revalidate = 3600;
 
@@ -11,7 +18,11 @@ export const metadata = {
 };
 
 export default async function MatrixPage() {
-  const meta = await getWikiMeta();
+  const [meta, abilities, units] = await Promise.all([
+    getWikiMeta(),
+    listAbilities(),
+    listUnits(),
+  ]);
   const matrix = meta.damageMatrix;
 
   return (
@@ -286,6 +297,27 @@ export default async function MatrixPage() {
           well, the answer is usually on this table, not in your stat totals.
         </p>
       </div>
+
+      {/* The elemental axis, deliberately repeated on this page: the matrix is
+          where players come to reason about counters, and elements are the one
+          place a counter stops being soft. */}
+      <ElementalDefences
+        abilities={abilities}
+        units={units}
+        meta={meta}
+        heading="The other axis: elements"
+        intro={
+          <p className="mb-4 max-w-prose text-sm text-bh-mute">
+            Everything above is a <em>soft</em> counter — even the worst cell on
+            the matrix still trades, just badly. Elements are the exception, and
+            they resolve on a separate axis from attack and armour type. A
+            weakness makes a matchup half again as punishing; an immunity ends
+            it outright, taking the damage to zero no matter what the matrix
+            says.
+          </p>
+        }
+        moreHref="/wiki/elements"
+      />
     </div>
   );
 }

@@ -4,17 +4,20 @@ import IconImg from "@/components/IconImg";
 import { slugOf, tagLeaf, type WikiMeta, type WikiRecord } from "@/lib/wiki";
 
 /**
- * One table covering every elemental defence in the game: immunity (total) and
- * the three resistance tiers (partial), per element.
+ * One table covering every elemental defence in the game, ordered worst-case to
+ * best-case for the attacker: weakness (+50%), the three resistance tiers, then
+ * immunity (total). That left-to-right ramp is the point of the layout - you
+ * read across a row and watch the same element go from amplified to erased.
  *
- * The 21 resistance passives are pure C++ classes, so nothing about them can be
- * authored per-asset - element, tier and percentage are exported as structured
- * fields (`resistElement` / `resistTier` / `resistPercent`) and the icons come
- * from the `resistIcons` tag map in meta. Grouping is therefore data-driven; no
- * display-name string matching.
+ * The resistance and weakness passives are pure C++ classes, so nothing about
+ * them can be authored per-asset: element, tier and percentage are exported as
+ * structured fields (`resistElement` / `resistTier` / `resistPercent`,
+ * `weaknessElement` / `weaknessPercent`) and the icons come from the
+ * `resistIcons` / `weaknessIcons` tag maps in meta. Grouping is therefore
+ * data-driven - no display-name string matching.
  *
- * Weaknesses do not exist in the game yet. The column is deliberately absent
- * rather than shown empty - see the note under the table.
+ * Shared by /wiki/abilities, /wiki/matrix and /wiki/elements; the props only
+ * change the framing around the table, never the table itself.
  */
 
 const TIERS = [
@@ -59,11 +62,13 @@ function Carriers({ carriers }: { carriers: Carrier[] }) {
 function Cell({
   icon,
   title,
+  tone,
   sub,
   carriers,
 }: {
   icon?: string;
   title: string;
+  tone?: string;
   sub: string;
   carriers: Carrier[];
 }) {
@@ -72,7 +77,9 @@ function Cell({
       <span className="flex items-start gap-2">
         {icon ? <IconImg file={icon} size={28} alt="" /> : null}
         <span className="block">
-          <span className="block text-sm text-bh-ink">{title}</span>
+          <span className={`block text-sm ${tone || "text-bh-ink"}`}>
+            {title}
+          </span>
           <span className="block text-xs text-bh-mute">{sub}</span>
         </span>
       </span>
@@ -83,14 +90,30 @@ function Cell({
   );
 }
 
+const Empty = () => (
+  <td className="align-top px-3 py-3 border-t border-bh-rule text-xs text-bh-mute/50">
+    —
+  </td>
+);
+
 export default function ElementalDefences({
   abilities,
   units,
   meta,
+  heading = "Elemental defences",
+  intro,
+  showFootnote = true,
+  moreHref,
+  moreLabel = "Full elemental damage guide",
 }: {
   abilities: WikiRecord[];
   units: WikiRecord[];
   meta: WikiMeta;
+  heading?: string | null;
+  intro?: React.ReactNode;
+  showFootnote?: boolean;
+  moreHref?: string;
+  moreLabel?: string;
 }) {
   const unitByName = new Map(
     units.map((u) => [u.displayName || u.key, u] as const),
@@ -106,13 +129,18 @@ export default function ElementalDefences({
       icon: rec.icon as string | undefined,
     };
   };
+  const carriersFor = (a: WikiRecord): Carrier[] =>
+    ((a.grantedBy as string[]) || []).map(carrierOf).filter(Boolean) as Carrier[];
+
+  const resists = abilities.filter((a) => a.resistElement);
+  const weaknesses = abilities.filter((a) => a.weaknessElement);
 
   // Elements come from the data, not a hardcoded list, so a new element added
   // to the game shows up here on the next sync with no code change.
-  const resists = abilities.filter((a) => a.resistElement);
   const elements = [
     ...new Set([
       ...resists.map((a) => a.resistElement as string),
+      ...weaknesses.map((a) => a.weaknessElement as string),
       ...Object.keys(meta.immunityIcons || {}).map((t) =>
         t.replace("Unit.Immune.", "Damage.Element."),
       ),
@@ -126,39 +154,43 @@ export default function ElementalDefences({
   for (const u of units) {
     for (const tag of (u.immuneElements as string[]) || []) {
       const el = tag.replace("Unit.Immune.", "Damage.Element.");
-      if (!immuneByElement.has(el)) immuneByElement.set(el, []);
-      immuneByElement.set(el, [
-        ...immuneByElement.get(el)!,
-        {
-          label: u.displayName || u.key,
-          href: `/wiki/unit/${slugOf(u.key)}`,
-          icon: u.icon as string | undefined,
-        },
-      ]);
+      const list = immuneByElement.get(el) || [];
+      list.push({
+        label: u.displayName || u.key,
+        href: `/wiki/unit/${slugOf(u.key)}`,
+        icon: u.icon as string | undefined,
+      });
+      immuneByElement.set(el, list);
     }
   }
 
   return (
     <section className="mt-14">
-      <h2 className="font-display text-2xl mb-1">Elemental defences</h2>
-      <p className="mb-4 text-sm text-bh-mute">
-        Immunity removes an element entirely; resistance only softens it.
-        Immunity always outranks resistance, tiers of the same element never
-        stack, and armour still applies on top. Resistance also blocks that
-        element&rsquo;s status effect &mdash; at every tier.
-      </p>
+      {heading ? (
+        <h2 className="font-display text-2xl mb-1">{heading}</h2>
+      ) : null}
+
+      {intro ?? (
+        <p className="mb-4 max-w-prose text-sm text-bh-mute">
+          Most counters in this game are soft. Elements are the exception: a
+          weakness makes a matchup half again as punishing, and an immunity
+          erases it outright. Read a row left to right and the same element goes
+          from amplified, through three grades of resistance, to nothing at all.
+        </p>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-xs uppercase tracking-wide text-bh-mute">
               <th className="px-3 py-2 font-medium">Element</th>
-              <th className="px-3 py-2 font-medium">Immune</th>
+              <th className="px-3 py-2 font-medium">Weak</th>
               {TIERS.map((t) => (
                 <th key={t.key} className="px-3 py-2 font-medium">
                   {t.label}
                 </th>
               ))}
+              <th className="px-3 py-2 font-medium">Immune</th>
             </tr>
           </thead>
           <tbody>
@@ -166,7 +198,7 @@ export default function ElementalDefences({
               const leaf = tagLeaf(el);
               const immuneTag = el.replace("Damage.Element.", "Unit.Immune.");
               const immuneIcon = meta.immunityIcons?.[immuneTag];
-              const hasImmunity = Boolean(immuneIcon);
+              const weak = weaknesses.find((a) => a.weaknessElement === el);
               return (
                 <tr key={el}>
                   <td className="align-top px-3 py-3 border-t border-bh-rule">
@@ -182,10 +214,39 @@ export default function ElementalDefences({
                     </span>
                   </td>
 
-                  {hasImmunity ? (
+                  {weak ? (
+                    <Cell
+                      icon={meta.weaknessIcons?.[weak.resistTag as string]}
+                      title={`+${weak.weaknessPercent}%`}
+                      tone="text-bh-blood"
+                      sub={(weak.displayName as string) || ""}
+                      carriers={carriersFor(weak)}
+                    />
+                  ) : (
+                    <Empty />
+                  )}
+
+                  {TIERS.map((t) => {
+                    const ability = resists.find(
+                      (a) => a.resistElement === el && a.resistTier === t.key,
+                    );
+                    if (!ability) return <Empty key={t.key} />;
+                    return (
+                      <Cell
+                        key={t.key}
+                        icon={meta.resistIcons?.[ability.resistTag as string]}
+                        title={`−${ability.resistPercent}%`}
+                        sub={(ability.displayName as string) || ""}
+                        carriers={carriersFor(ability)}
+                      />
+                    );
+                  })}
+
+                  {immuneIcon ? (
                     <Cell
                       icon={immuneIcon}
                       title="Immune"
+                      tone="text-bh-gold"
                       sub="takes no damage"
                       carriers={immuneByElement.get(el) || []}
                     />
@@ -194,39 +255,6 @@ export default function ElementalDefences({
                       no immunity
                     </td>
                   )}
-
-                  {TIERS.map((t) => {
-                    const ability = resists.find(
-                      (a) =>
-                        a.resistElement === el && a.resistTier === t.key,
-                    );
-                    if (!ability) {
-                      return (
-                        <td
-                          key={t.key}
-                          className="align-top px-3 py-3 border-t border-bh-rule text-xs text-bh-mute/50"
-                        >
-                          —
-                        </td>
-                      );
-                    }
-                    const carriers = (
-                      ((ability.grantedBy as string[]) || [])
-                        .map(carrierOf)
-                        .filter(Boolean) as Carrier[]
-                    );
-                    return (
-                      <Cell
-                        key={t.key}
-                        icon={
-                          meta.resistIcons?.[ability.resistTag as string]
-                        }
-                        title={`−${ability.resistPercent}%`}
-                        sub={(ability.displayName as string) || ""}
-                        carriers={carriers}
-                      />
-                    );
-                  })}
                 </tr>
               );
             })}
@@ -234,11 +262,24 @@ export default function ElementalDefences({
         </table>
       </div>
 
-      <p className="mt-3 text-xs text-bh-mute/70">
-        Shadow and Acid have no immunity by design &mdash; that damage is only
-        ever reduced, never removed. Elemental weaknesses are not in the game
-        yet; they will appear here as a further column.
-      </p>
+      {showFootnote ? (
+        <p className="mt-3 max-w-prose text-xs text-bh-mute/70">
+          Shadow and Acid have no immunity by design — that damage is only ever
+          reduced, never removed. Weaknesses are untiered: every one is the same
+          +50%.
+        </p>
+      ) : null}
+
+      {moreHref ? (
+        <p className="mt-4 text-sm">
+          <Link
+            href={moreHref}
+            className="text-bh-blood hover:text-bh-bloodInk transition-colors"
+          >
+            {moreLabel} →
+          </Link>
+        </p>
+      ) : null}
     </section>
   );
 }

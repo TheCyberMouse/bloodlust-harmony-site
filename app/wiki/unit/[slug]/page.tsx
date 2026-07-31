@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import IconImg from "@/components/IconImg";
 import JsonLd, { breadcrumbLd } from "@/components/JsonLd";
-import TagBadge from "@/components/TagBadge";
 import TypeStat from "@/components/TypeStat";
 import Link from "next/link";
 import { GameText } from "@/lib/richtext";
@@ -166,20 +165,10 @@ export default async function UnitPage({
               {tagLeaf(u.unitClass as string)}
             </p>
           ) : null}
-          {/* Damage element moved into the Stats card beside attack/armor type
-              - it describes the unit's damage, so it belongs with the other
-              combat types rather than as a small badge up here. */}
-          <div className="mt-2 flex flex-wrap gap-2">
-            {((u.immuneElements as string[]) || []).map((t) => (
-              <TagBadge
-                key={t}
-                tag={t}
-                prefix="Immune:"
-                iconMap={meta.immunityIcons}
-                tone="text-bh-gold"
-              />
-            ))}
-          </div>
+          {/* Damage element AND immunities both live in the Stats card beside
+              attack/armor type - they are combat types of equal weight, so
+              showing one large and the other as a small badge read as though
+              immunity mattered less. */}
         </div>
       </div>
 
@@ -255,7 +244,7 @@ export default async function UnitPage({
           {Object.keys(stats).length > 0 || u.attackType || u.armorType ? (
         <div className="w-full max-w-md rounded-lg border border-bh-rule bg-bh-panel p-5">
           <h2 className="font-display text-lg mb-3">Stats</h2>
-          {u.attackType || u.armorType || u.damageElement ? (
+          {u.attackType || u.armorType || u.damageElement || ((u.immuneElements as string[]) || []).length > 0 ? (
             <div className="mb-4 grid grid-cols-2 gap-4 border-b border-bh-rule pb-4">
               {u.attackType ? (
                 <TypeStat kind="attack" tag={u.attackType as string} meta={meta} />
@@ -283,6 +272,17 @@ export default async function UnitPage({
                   </span>
                 </div>
               ) : null}
+              {((u.immuneElements as string[]) || []).map((t) => (
+                <div key={t} className="flex items-center gap-3">
+                  <IconImg file={meta.immunityIcons?.[t]} size={48} alt="" />
+                  <span>
+                    <span className="block text-xs text-bh-mute">Immune to</span>
+                    <span className="block text-lg font-medium text-bh-gold">
+                      {tagLeaf(t)}
+                    </span>
+                  </span>
+                </div>
+              ))}
             </div>
           ) : null}
           <dl className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
