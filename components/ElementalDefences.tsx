@@ -139,6 +139,61 @@ export default function ElementalDefences({
     }
   }
 
+  // Computed once and rendered twice: as a wide table on desktop, and as a
+  // stack of per-element cards on mobile. Deriving both from the same array is
+  // what stops the two views drifting apart.
+  type Defence = {
+    label: string;
+    icon?: string;
+    title: string | null;
+    sub: string;
+    tone?: string;
+    carriers: Carrier[];
+  };
+  const defencesFor = (el: string): Defence[] => {
+    const out: Defence[] = [];
+
+    const weak = weaknesses.find((a) => a.weaknessElement === el);
+    out.push({
+      label: "Weak",
+      icon: weak ? meta.weaknessIcons?.[weak.resistTag as string] : undefined,
+      title: weak ? `+${weak.weaknessPercent}%` : null,
+      sub: weak ? ((weak.displayName as string) || "") : "",
+      tone: "text-bh-blood",
+      carriers: weak ? carriersFor(weak) : [],
+    });
+
+    for (const t of TIERS) {
+      const ability = resists.find(
+        (a) => a.resistElement === el && a.resistTier === t.key,
+      );
+      out.push({
+        label: t.label,
+        icon: ability
+          ? meta.resistIcons?.[ability.resistTag as string]
+          : undefined,
+        title: ability ? `−${ability.resistPercent}%` : null,
+        sub: ability ? ((ability.displayName as string) || "") : "",
+        carriers: ability ? carriersFor(ability) : [],
+      });
+    }
+
+    const immuneIcon =
+      meta.immunityIcons?.[el.replace("Damage.Element.", "Unit.Immune.")];
+    out.push({
+      label: "Immune",
+      icon: immuneIcon,
+      // A missing immunity icon means the element genuinely has none (Shadow,
+      // Acid) - distinct from "nobody carries it", so it gets its own wording.
+      title: immuneIcon ? "Immune" : null,
+      sub: immuneIcon ? "takes no damage" : "no immunity",
+      tone: "text-bh-gold",
+      carriers: immuneIcon ? immuneByElement.get(el) || [] : [],
+    });
+
+    return out;
+  };
+
   return (
     <section className="mt-14">
       {heading ? (
@@ -154,7 +209,9 @@ export default function ElementalDefences({
         </p>
       )}
 
-      <div className="overflow-x-auto">
+      {/* Desktop: the wide table. Hidden below md - at 389px it is 648px
+          wide and scrolls sideways, which is a poor way to read a reference. */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-xs uppercase tracking-wide text-bh-mute">
@@ -169,75 +226,97 @@ export default function ElementalDefences({
             </tr>
           </thead>
           <tbody>
-            {elements.map((el) => {
-              const leaf = tagLeaf(el);
-              const immuneTag = el.replace("Damage.Element.", "Unit.Immune.");
-              const immuneIcon = meta.immunityIcons?.[immuneTag];
-              const weak = weaknesses.find((a) => a.weaknessElement === el);
-              return (
-                <tr key={el}>
-                  <td className="align-top px-3 py-3 border-t border-bh-rule">
-                    <span className="flex items-center gap-2">
-                      <IconImg
-                        file={meta.damageElementIcons?.[el]}
-                        size={28}
-                        alt=""
-                      />
-                      <span className="text-sm font-medium text-bh-ink">
-                        {leaf}
-                      </span>
+            {elements.map((el) => (
+              <tr key={el}>
+                <td className="align-top px-3 py-3 border-t border-bh-rule">
+                  <span className="flex items-center gap-2">
+                    <IconImg
+                      file={meta.damageElementIcons?.[el]}
+                      size={28}
+                      alt=""
+                    />
+                    <span className="text-sm font-medium text-bh-ink">
+                      {tagLeaf(el)}
                     </span>
-                  </td>
-
-                  {weak ? (
+                  </span>
+                </td>
+                {defencesFor(el).map((d) =>
+                  d.title ? (
                     <Cell
-                      icon={meta.weaknessIcons?.[weak.resistTag as string]}
-                      title={`+${weak.weaknessPercent}%`}
-                      tone="text-bh-blood"
-                      sub={(weak.displayName as string) || ""}
-                      carriers={carriersFor(weak)}
+                      key={d.label}
+                      icon={d.icon}
+                      title={d.title}
+                      tone={d.tone}
+                      sub={d.sub}
+                      carriers={d.carriers}
                       meta={meta}
                     />
-                  ) : (
-                    <Empty />
-                  )}
-
-                  {TIERS.map((t) => {
-                    const ability = resists.find(
-                      (a) => a.resistElement === el && a.resistTier === t.key,
-                    );
-                    if (!ability) return <Empty key={t.key} />;
-                    return (
-                      <Cell
-                        key={t.key}
-                        icon={meta.resistIcons?.[ability.resistTag as string]}
-                        title={`−${ability.resistPercent}%`}
-                        sub={(ability.displayName as string) || ""}
-                        carriers={carriersFor(ability)}
-                        meta={meta}
-                      />
-                    );
-                  })}
-
-                  {immuneIcon ? (
-                    <Cell
-                      icon={immuneIcon}
-                      title="Immune"
-                      tone="text-bh-gold"
-                      sub="takes no damage"
-                      carriers={immuneByElement.get(el) || []}
-                      meta={meta}
-                    />
-                  ) : (
-                    <td className="align-top px-3 py-3 border-t border-bh-rule text-xs text-bh-mute/60">
+                  ) : d.label === "Immune" ? (
+                    <td
+                      key={d.label}
+                      className="align-top px-3 py-3 border-t border-bh-rule text-xs text-bh-mute/60"
+                    >
                       no immunity
                     </td>
-                  )}
-                </tr>
-              );
-            })}
+                  ) : (
+                    <Empty key={d.label} />
+                  ),
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile: one card per element, defences stacked as labelled rows.
+          Same data, read top-to-bottom instead of left-to-right. */}
+      <div className="md:hidden space-y-3">
+        {elements.map((el) => (
+          <div
+            key={el}
+            className="rounded-lg border border-bh-rule bg-bh-panel p-4"
+          >
+            <div className="flex items-center gap-2">
+              <IconImg file={meta.damageElementIcons?.[el]} size={28} alt="" />
+              <span className="font-medium text-bh-ink">{tagLeaf(el)}</span>
+            </div>
+            <dl className="mt-3 space-y-2">
+              {defencesFor(el).map((d) => (
+                <div
+                  key={d.label}
+                  className="flex items-start gap-3 border-t border-bh-rule pt-2"
+                >
+                  <dt className="w-20 shrink-0 text-xs uppercase tracking-wide text-bh-mute">
+                    {d.label}
+                  </dt>
+                  <dd className="min-w-0 flex-1">
+                    {d.title ? (
+                      <>
+                        <span className="flex items-center gap-2">
+                          {d.icon ? (
+                            <IconImg file={d.icon} size={22} alt="" />
+                          ) : null}
+                          <span className={`text-sm ${d.tone || "text-bh-ink"}`}>
+                            {d.title}
+                          </span>
+                        </span>
+                        {d.carriers.length > 0 ? (
+                          <span className="mt-1.5 block">
+                            <Carriers carriers={d.carriers} meta={meta} />
+                          </span>
+                        ) : null}
+                      </>
+                    ) : (
+                      <span className="text-xs text-bh-mute/50">
+                        {d.label === "Immune" ? "no immunity" : "—"}
+                      </span>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))}
       </div>
 
       {showFootnote ? (

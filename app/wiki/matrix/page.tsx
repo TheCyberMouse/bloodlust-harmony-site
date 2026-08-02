@@ -47,7 +47,11 @@ export default async function MatrixPage() {
       </div>
 
       {matrix ? (
-        <div className="mt-10 overflow-x-auto">
+        <>
+        {/* Desktop: the full 8-column grid. Hidden below md - at 389px it is
+            726px wide, so it scrolls sideways and the row labels slide out of
+            view, which defeats the point of a lookup table. */}
+        <div className="mt-10 hidden md:block overflow-x-auto">
           <table className="border-collapse text-base">
             <thead>
               <tr>
@@ -97,6 +101,56 @@ export default async function MatrixPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile: one card per attack type, its seven matchups listed as
+            rows. Keeps the attacker label pinned above the numbers instead of
+            scrolling away from them. */}
+        <div className="mt-10 md:hidden space-y-3">
+          {matrix.attackTypes.map((attack) => (
+            <div
+              key={attack}
+              className="rounded-lg border border-bh-rule bg-bh-panel p-4"
+            >
+              <div className="flex items-center gap-3">
+                <IconImg
+                  file={meta.attackTypeIcons?.[attack]}
+                  size={40}
+                  alt=""
+                />
+                <span className="font-medium text-bh-ink">
+                  {tagLeaf(attack)}
+                </span>
+                <span className="text-xs text-bh-mute">vs armor</span>
+              </div>
+              <dl className="mt-3">
+                {matrix.armorTypes.map((armor) => {
+                  const mult = matrix.rows[attack]?.[armor] ?? 1.0;
+                  return (
+                    <div
+                      key={armor}
+                      className="flex items-center gap-3 border-t border-bh-rule py-2"
+                    >
+                      <IconImg
+                        file={meta.armorTypeIcons?.[armor]}
+                        size={24}
+                        alt=""
+                      />
+                      <dt className="flex-1 text-sm text-bh-mute">
+                        {tagLeaf(armor)}
+                      </dt>
+                      <dd
+                        className={`text-base tabular-nums ${matrixTone(mult)}`}
+                      >
+                        {mult.toFixed(2)}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </div>
+          ))}
+        </div>
+        </>
       ) : (
         <p className="mt-10 text-bh-mute">
           The matrix data has not been synced yet. Run the wiki export and sync

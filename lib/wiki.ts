@@ -63,6 +63,53 @@ export function raceSlug(race: WikiRecord): string {
     .replace(/^-+|-+$/g, "");
 }
 
+// ---------------------------------------------------------------------------
+// Faction display order. See CLAUDE.md — this list is the authority.
+// ---------------------------------------------------------------------------
+
+/** The canonical order factions are listed in, everywhere on the site.
+ *
+ *  Do NOT derive this from anything else. Not `raceIndex`: the export has
+ *  Nightspun at 5 and Ironoath at 6, the reverse of the order below, and every
+ *  other faction lines up — so `raceIndex` looks right until exactly that pair.
+ *  Not query order either: `listTable` issues no ORDER BY, so Postgres row
+ *  order is unspecified and shifts as rows are updated. */
+export const FACTION_ORDER = [
+  "Exemplaris",
+  "Arcanists",
+  "Grovewardens",
+  "Graveborn",
+  "Warclans",
+  "Ironoath",
+  "Nightspun",
+  "Voidwrought",
+] as const;
+
+const FACTION_RANK = new Map(
+  FACTION_ORDER.map((name, i) => [name.toLowerCase(), i] as const),
+);
+
+const raceName = (race: WikiRecord) =>
+  (race.displayName || race.key || "").trim();
+
+/** Orders factions by FACTION_ORDER. Anything not on the list sorts to the end
+ *  alphabetically rather than being dropped, so a newly exported faction shows
+ *  up at the bottom of the page as a visible prompt to add it to the list. */
+export function compareRaces(a: WikiRecord, b: WikiRecord): number {
+  const an = raceName(a);
+  const bn = raceName(b);
+  const ai = FACTION_RANK.get(an.toLowerCase()) ?? Infinity;
+  const bi = FACTION_RANK.get(bn.toLowerCase()) ?? Infinity;
+  // Guarded before the subtract: Infinity - Infinity is NaN, which would make
+  // the comparator incoherent for two unlisted factions.
+  if (ai !== bi) return ai - bi;
+  return an.localeCompare(bn);
+}
+
+/** Copy-and-sort, for a race list that did not come from `listRaces`. */
+export const sortRaces = (races: WikiRecord[]): WikiRecord[] =>
+  [...races].sort(compareRaces);
+
 /** Race lookup accepting the display-name slug, with the legacy DA-key slug
  *  as a fallback so old links keep resolving. */
 export async function findRaceBySlug(slug: string): Promise<WikiRecord | null> {
@@ -84,7 +131,13 @@ async function listTable(table: string): Promise<WikiRecord[]> {
   return (data ?? []).map((r: { data: WikiRecord }) => r.data);
 }
 
-export const listRaces = () => listTable("races");
+/** Always canonically ordered (see `compareRaces`). Sorting here rather than at
+ *  the call sites is deliberate: every faction-ordered surface on the site
+ *  reaches races through this one function — `unitsByFaction` and
+ *  `buildingsByFaction` both just map over it — so they all inherit the order
+ *  and cannot drift out of sync with it. */
+export const listRaces = async (): Promise<WikiRecord[]> =>
+  sortRaces(await listTable("races"));
 export const listUnits = () => listTable("units");
 export const listBuildings = () => listTable("buildings");
 export const listUpgrades = () => listTable("upgrades");

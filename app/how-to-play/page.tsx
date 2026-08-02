@@ -168,7 +168,7 @@ export default function HowToPlayPage() {
               href: "/wiki/modes/ultimate",
               name: "Ultimate",
               blurb:
-                "Everyone shares one faction and is dealt a random set of 13 buildings. Win with the hand you are given.",
+                "Everyone is dealt a random set of 13 buildings. Win with the hand you are given.",
             },
             {
               href: "/wiki/modes/draft",
