@@ -267,6 +267,128 @@ export const GAME_MODES: GameMode[] = [
       },
     ],
   },
+  {
+    slug: "survival",
+    name: "Survival",
+    tagline:
+      "Hold the line together against an authored schedule of enemy waves.",
+    summary:
+      "The full Regular game on your side, a wave director on the other. Build, fight, and keep your castle alive until the clock runs out.",
+    glance: {
+      players: "Solo or co-op",
+      economy: "Full",
+      buildings: "Your faction's menu",
+      win: "Castle alive when the clock ends",
+    },
+    sections: [
+      {
+        heading: "Rules",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Everyone plays on **one side**: the lobby is a single Allies list. You keep your own faction and color picks, and AI allies fill any empty seats.",
+              "Your half is the full Regular game — income, lumber, spawners, researches, the shop, rescue strikes, and your army waves marching as normal.",
+              "The enemy has no player and no castle. A **wave director** runs an authored attack schedule against you, escalating from trash packs to heavier set-piece waves as the clock runs down.",
+              "Enemy waves **scale with your player count**, so a full Allies list faces a proportionally bigger horde.",
+              "**Victory:** the timer reaches zero and your castle is still standing. **Defeat:** your castle falls. Nothing else ends it.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Flow",
+        blocks: [
+          {
+            type: "p",
+            text: "The gap between enemy waves is your build window. The early schedule is a formality; the late schedule is not, and the last stretch is a race between your economy curve and the director's. Co-op turns it into a coordination game: who covers anti-air, who holds the lane, and who saves a rescue strike for the wave that goes wrong.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "raid",
+    name: "Raid",
+    tagline: "Push into hostile ground and rack up kills before the clock stops.",
+    summary:
+      "The lane is held by dug-in enemy camps that get harder the deeper you push. You start rich, and there is no winning — only how far you got.",
+    glance: {
+      players: "Solo or co-op",
+      economy: "Full, with a rich start",
+      buildings: "Your faction's menu",
+      win: "None — kill score at the clock",
+    },
+    sections: [
+      {
+        heading: "Rules",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Same one-sided Allies lobby as Survival: your own faction, your own color, AI allies in any empty seats.",
+              "The lane holds **tethered enemy camps** in their own colors — standing armies dug in at fixed positions. They hold their ground rather than marching on you, chase a bounded distance when poked, then walk home.",
+              "**Camps get harder with depth.** The first one folds in the opening minutes; the deep ones are a wall. The lane is deliberately too long to clear, so the question is never whether you finished — it is how far you got.",
+              "A light **forward trickle** of enemies still comes at you, so your own castle is never entirely safe to ignore.",
+              "**Every kill scores**, and enemy structures are worth extra — a standing reward for pushing and razing over farming the front camp.",
+              "**You start rich** and the economy runs normally from there, so you hit the ground fighting.",
+              "When the clock stops, the run ends and your kill total is the result.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Flow",
+        blocks: [
+          {
+            type: "p",
+            text: "Raid is a score attack, so the tension is pace. Every minute spent turtling is a minute the deep camps go unpunished, and every greedy push risks feeding your army to a camp you were not ready for. Detouring to raze a camp's structures is the classic gamble: a fat score bonus against the time it costs.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "arena",
+    name: "Arena",
+    tagline:
+      "Round-based army buying. Spend the budget, fight to the death, re-buy bigger.",
+    summary:
+      "Each round you spend a budget on units from your faction's list, the armies fight it out in the pit, and the budget rises. Lose a round, lose a life — last side standing wins.",
+    glance: {
+      players: "1 vs AI, or 2–9 FFA",
+      economy: "A per-round budget",
+      buildings: "Units bought from your faction's list",
+      win: "Last side with a life left",
+    },
+    sections: [
+      {
+        heading: "Rules",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Played on an arena pit — no castles, no build zones, no income. Each round opens a timed **buy phase** with a budget to spend on units from **your faction's buildable list**, so your faction pick is your catalog.",
+              "**Buys are hidden.** Your own picks assemble as a ghost army on your arc of the pit while you shop; everyone else's army is revealed only when the fight starts.",
+              "When the buy timer closes, the armies spawn around the pit and **fight to the death on their own** — no unit control, and stalled fights are called rather than left to drag.",
+              "**Nothing carries over.** You re-buy from scratch every round while the **budget rises**, so each round is a fresh composition puzzle at a bigger scale.",
+              "Losing a round costs a **life** (three by default). Out of lives means you are out, and you keep spectating. **Last side standing takes the match.**",
+              "Multiplayer Arena is a **2 to 9 player free-for-all** on one flat lobby list. Solo, you duel **the house**: a composed AI army built against the same budget and the same catalog rules.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Why it plays well",
+        blocks: [
+          {
+            type: "p",
+            text: "Arena is composition poker. With buys hidden you are not countering what you see — you are guessing what the table will field and buying the answer, then adjusting round over round as the reads accumulate. The rising budget keeps early mistakes cheap and late ones decisive.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export function getMode(slug: string): GameMode | undefined {

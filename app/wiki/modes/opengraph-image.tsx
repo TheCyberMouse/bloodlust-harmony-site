@@ -11,7 +11,7 @@ export default function Image() {
   return renderPageCard({
     eyebrow: "WIKI",
     title: "Game Modes",
-    subtitle: "Five ways to play, from the classic loop to army poker.",
+    subtitle: "Eight ways to play, from the classic loop to army poker.",
     chips: GAME_MODES.map((m) => m.name),
   });
 }

@@ -158,9 +158,9 @@ export default function HowToPlayPage() {
 
       <Section title="Other ways to play">
         <p>
-          Everything above is Regular. The other four modes reuse the same
-          combat, economy, and factions, and change how you get your buildings
-          or where the fight happens.
+          Everything above is Regular. The other seven modes reuse the same
+          combat, economy, and factions, and change how you get your
+          buildings, who the enemy is, or where the fight happens.
         </p>
         <ul className="space-y-3">
           {[
@@ -188,6 +188,24 @@ export default function HowToPlayPage() {
               blurb:
                 "A no-rules playground. Spawn any units on up to nine sides and watch them fight. Great for testing matchups.",
             },
+            {
+              href: "/wiki/modes/survival",
+              name: "Survival",
+              blurb:
+                "Co-op hold. The enemy is an authored wave schedule instead of another player; keep your castle alive until the clock runs out.",
+            },
+            {
+              href: "/wiki/modes/raid",
+              name: "Raid",
+              blurb:
+                "Co-op score attack. Dug-in enemy camps get harder the deeper you push. You start rich, and only your kill count matters.",
+            },
+            {
+              href: "/wiki/modes/arena",
+              name: "Arena",
+              blurb:
+                "Round-based army buying for 1 to 9 players. Spend a rising budget, fight to the death in the pit, and lose a life per lost round.",
+            },
           ].map((m) => (
             <li key={m.href}>
               <Link
@@ -201,7 +219,7 @@ export default function HowToPlayPage() {
           ))}
         </ul>
         <p>
-          Full rules for all five are on the{" "}
+          Full rules for all eight are on the{" "}
           <Link
             href="/wiki/modes"
             className="text-bh-blood hover:text-bh-bloodInk transition-colors"

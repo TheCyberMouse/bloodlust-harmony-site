@@ -71,7 +71,7 @@ export default function AlphaPage() {
       <div className="mt-14 max-w-prose rounded-lg border border-bh-rule bg-bh-panel p-6">
         <h2 className="font-display text-xl mb-3">What to expect</h2>
         <p className="text-bh-mute leading-relaxed">
-          This is early. The gameplay, the five modes, and the counter system
+          This is early. The gameplay, the eight modes, and the counter system
           are all in and playable, but sound, effects, and 2D art are still
           catching up. You are here to find what is broken and tell us what
           feels good and what does not. That feedback is the whole point of the

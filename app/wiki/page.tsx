@@ -89,11 +89,12 @@ export default async function WikiHub() {
             Game modes
           </h2>
           <span className="text-sm text-bh-mute">
-            Regular · Ultimate · Draft · Poker · Sandbox
+            Regular · Ultimate · Draft · Poker · Sandbox · Survival · Raid ·
+            Arena
           </span>
         </div>
         <p className="mt-1.5 text-sm text-bh-mute">
-          Five ways to play, from the classic Castle Fight loop to army poker.
+          Eight ways to play, from the classic Castle Fight loop to army poker.
           How each one works and when to pick it.
         </p>
       </Link>

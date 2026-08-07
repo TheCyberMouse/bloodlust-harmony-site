@@ -4,7 +4,7 @@ import { GAME_MODES } from "@/lib/modes";
 export const metadata = {
   title: "Game modes",
   description:
-    "The five game modes in Bloodlust & Harmony: Regular, Ultimate, Draft, Poker, and Sandbox. How each one plays and when to pick it.",
+    "The eight game modes in Bloodlust & Harmony: Regular, Ultimate, Draft, Poker, Sandbox, Survival, Raid, and Arena. How each one plays and when to pick it.",
   alternates: { canonical: "/wiki/modes" },
 };
 
@@ -13,7 +13,7 @@ export default function ModesOverview() {
     <div className="mx-auto max-w-6xl px-4 py-14">
       <h1 className="font-display text-4xl">Game modes</h1>
       <p className="mt-2 max-w-prose text-bh-mute">
-        Five ways to play, all chosen in the Create Server menu. Every mode
+        Eight ways to play, all chosen in the Create Server menu. Every mode
         works in Single Player and Multiplayer alike. Single Player is just a
         one-human lobby with AI filling the other seats.
       </p>
@@ -55,9 +55,11 @@ export default function ModesOverview() {
         <h2 className="font-display text-xl mb-3">Good to know</h2>
         <ul className="ml-5 list-disc space-y-2 text-bh-mute leading-relaxed">
           <li>
-            Every non-Regular mode locks the faction picker, since the faction
-            is shared or unused. Poker and Sandbox go further and flatten the
-            lobby into one free-for-all Players list.
+            Ultimate, Draft, Poker, and Sandbox lock the faction picker, since
+            the faction is shared or unused. Survival, Raid, and Arena keep
+            your faction choice — Survival and Raid seat everyone on one
+            Allies list, while Poker, Sandbox, and Arena flatten the lobby
+            into a free-for-all Players list.
           </li>
           <li>
             <strong className="text-bh-ink">

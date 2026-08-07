@@ -232,13 +232,14 @@ const FACTION_IN_WORKS: Record<string, string[]> = {
 };
 
 /** Unit DAs deliberately kept off the site: duplicate/placeholder/unused
- *  content (a mislabeled slime, the spare dwarf defenders, a goblin/ghoul
- *  test unit, an archer in an Unused folder). Everything else that no faction
- *  claims falls into the Neutral section. */
+ *  content (a mislabeled slime, a dummy test slime, the spare dwarf
+ *  defenders, a goblin/ghoul test unit, an archer in an Unused folder).
+ *  Everything else that no faction claims falls into the Neutral section. */
 const HIDDEN_UNITS = new Set<string>([
   "DA_Goblin",
   "DA_Ghoul",
   "DA_Slime",
+  "DA_Grey_Slime",
   "DA_Ironbreaker",
   "DA_Shieldguard",
   "DA_Multishot_Archer",
