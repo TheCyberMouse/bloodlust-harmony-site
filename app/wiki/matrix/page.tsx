@@ -172,8 +172,8 @@ export default async function MatrixPage() {
           <li>
             <strong className="text-bh-ink">Immunity gates.</strong> An
             invulnerable target takes zero from anything. A target immune to
-            the hit&apos;s element (Fire, Ice, Poison, Lightning, Arcane) takes
-            zero from that element. Spell-immune targets take zero from the
+            the hit&apos;s element — any of the seven — takes zero from that
+            element. Spell-immune targets take zero from the
             Spells attack type. If any gate triggers, the hit ends here with an
             IMMUNE popup.
           </li>
@@ -300,10 +300,10 @@ export default async function MatrixPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-bh-ink">Immunities.</strong> Five elements
+            <strong className="text-bh-ink">Immunities.</strong> Every element
             can be blocked outright: a fire-immune unit takes zero Fire
-            damage, full stop. Shadow and Acid have no immunity and always go
-            through.
+            damage, full stop. All seven have an immunity, Shadow and Acid
+            included.
           </li>
           <li>
             <strong className="text-bh-ink">Statuses.</strong> Ice applies

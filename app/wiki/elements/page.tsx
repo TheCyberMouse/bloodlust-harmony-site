@@ -96,8 +96,8 @@ export default async function ElementsPage() {
         <p>
           <strong className="text-bh-ink">Immunity</strong> removes the element
           completely — zero damage, and no status from it either. Immunity
-          outranks everything else. Shadow and Acid deliberately have no
-          immunity: that damage can be reduced, never erased.
+          outranks everything else, and all seven elements have one — Shadow
+          and Acid included.
         </p>
         <p>
           Weakness and resistance are independent, so a unit holding both simply

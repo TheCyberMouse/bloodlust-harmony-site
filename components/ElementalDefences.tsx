@@ -183,8 +183,9 @@ export default function ElementalDefences({
     out.push({
       label: "Immune",
       icon: immuneIcon,
-      // A missing immunity icon means the element genuinely has none (Shadow,
-      // Acid) - distinct from "nobody carries it", so it gets its own wording.
+      // Every element has an immunity in the game (Shadow and Acid gained
+      // theirs 2026-07-31), so a missing icon means the synced export predates
+      // that - still distinct from "nobody carries it", hence its own wording.
       title: immuneIcon ? "Immune" : null,
       sub: immuneIcon ? "takes no damage" : "no immunity",
       tone: "text-bh-gold",
@@ -321,9 +322,7 @@ export default function ElementalDefences({
 
       {showFootnote ? (
         <p className="mt-3 max-w-prose text-xs text-bh-mute/70">
-          Shadow and Acid have no immunity by design — that damage is only ever
-          reduced, never removed. Weaknesses are untiered: every one is the same
-          +50%.
+          Weaknesses are untiered: every one is the same +50%.
         </p>
       ) : null}
 

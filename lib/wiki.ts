@@ -226,10 +226,11 @@ const FACTION_SUMMONS: Record<string, string[]> = {
 };
 
 /** Units that exist in the game data but are still in development. Shown in
- *  their own "In Works" subsection; kept out of the home page strip. */
-const FACTION_IN_WORKS: Record<string, string[]> = {
-  DA_Race_Orc: ["DA_OrcWarlock"],
-};
+ *  their own "In Works" subsection; kept out of the home page strip.
+ *  Currently empty: the Warclans Warlock shipped (2026-08-08) and now reaches
+ *  the normal walk via Mystic's Tent -> Warlock upgrade. Add a key here only
+ *  while a unit is genuinely unfinished. */
+const FACTION_IN_WORKS: Record<string, string[]> = {};
 
 /** Unit DAs deliberately kept off the site: duplicate/placeholder/unused
  *  content (a mislabeled slime, a dummy test slime, the spare dwarf
